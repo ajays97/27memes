@@ -83,7 +83,6 @@ public class MainActivity extends AppCompatActivity
         pDialog.setMessage("Loading...");
         pDialog.show();
 
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -140,7 +139,7 @@ public class MainActivity extends AppCompatActivity
         feedList.addFooterView(footer);
 
 
-        JsonObjectRequest objectRequest = new JsonObjectRequest("https:graph.facebook.com/v2.9/1515871602074952/feed?fields=full_picture&limit=5&access_token=" + AccessToken.getCurrentAccessToken().getToken(), null,
+        JsonObjectRequest objectRequest = new JsonObjectRequest("https:graph.facebook.com/v2.9/1713086835593817/feed?fields=full_picture&limit=5&access_token=" + AccessToken.getCurrentAccessToken().getToken(), null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject jsonObject) {
@@ -187,7 +186,6 @@ public class MainActivity extends AppCompatActivity
                             try {
                                 JSONArray jsonArray = jsonObject.getJSONArray("data");
                                 nextObj = jsonObject.getJSONObject("paging");
-                                next = nextObj.getString("next");
                                 for (int i = 0; i < 5; i++) {
                                     JSONObject postObj = jsonArray.getJSONObject(i);
                                     String image_url = postObj.getString("full_picture");
@@ -195,8 +193,10 @@ public class MainActivity extends AppCompatActivity
                                     if (image_url != null)
                                         feedAdapter.add(new Post(post_id, image_url));
                                 }
-
+                                next = nextObj.getString("next");
                             } catch (JSONException e) {
+                                Log.d("LOADMORE", e.toString());
+                                next = null;
                             } finally {
                                 feedAdapter.notifyDataSetChanged();
                             }
@@ -259,8 +259,12 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.mRefresh) {
+            refreshListener.onRefresh();
+        } else if (id == R.id.mLogout) {
+            LoginManager.getInstance().logOut();
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            finish();
         }
 
         return super.onOptionsItemSelected(item);
