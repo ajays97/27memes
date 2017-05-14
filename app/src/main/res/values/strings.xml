@@ -13,4 +13,6 @@
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">27\nMemes</string>
 
+    <string name="title_activity_image_view">ImageViewActivity</string>
+
 </resources>

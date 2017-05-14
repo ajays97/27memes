@@ -62,8 +62,6 @@ public class TimelineAdapter extends ArrayAdapter<Post>{
         if (imageLoader == null)
             imageLoader = AppController.getInstance().getImageLoader();
 
-
-
         NetworkImageView feedImage = (NetworkImageView) convertView
                 .findViewById(R.id.feed_image);
 

@@ -19,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         footer = inflater.inflate(R.layout.feed_footer, null);
         loadMore = (Button) footer.findViewById(R.id.load_more);
         loadMore.setOnClickListener(new View.OnClickListener() {
@@ -127,6 +128,19 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        feedList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+
+                Post post = (Post) adapterView.getItemAtPosition(position);
+                String url = post.getImage_url();
+
+                Intent intent = new Intent(MainActivity.this, ViewImageActivity.class);
+                intent.putExtra(Intent.EXTRA_TEXT, url);
+                startActivity(intent);
+            }
+        });
+
         updateFeed();
 
     }
@@ -139,7 +153,7 @@ public class MainActivity extends AppCompatActivity
         feedList.addFooterView(footer);
 
 
-        JsonObjectRequest objectRequest = new JsonObjectRequest("https:graph.facebook.com/v2.9/1713086835593817/feed?fields=full_picture&limit=5&access_token=" + AccessToken.getCurrentAccessToken().getToken(), null,
+        JsonObjectRequest objectRequest = new JsonObjectRequest("https:graph.facebook.com/v2.9/1515871602074952/feed?fields=full_picture&limit=5&access_token=" + AccessToken.getCurrentAccessToken().getToken(), null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject jsonObject) {

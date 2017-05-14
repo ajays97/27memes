@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/mDownload"
+        app:showAsAction="always"
+        android:title="DOWNLOAD MEME" />
+<!--
+    <item
+        android:id="@+id/mShare"
+        app:showAsAction="always"
+        android:title="SHARE"
+        android:icon="@drawable/ic_bar_share"
+        android:actionProviderClass=
+            "android.widget.ShareActionProvider" />-->
+
+</menu>

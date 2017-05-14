@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/27memes.iml" filepath="$PROJECT_DIR$/27memes.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/subsampling-scale-image-view-3.6.0/subsampling-scale-image-view-3.6.0.iml" filepath="$PROJECT_DIR$/subsampling-scale-image-view-3.6.0/subsampling-scale-image-view-3.6.0.iml" />
     </modules>
   </component>
 </project>
