@@ -22,10 +22,17 @@
 
     <item android:title="Options">
         <menu>
+
+            <item
+                android:id="@+id/nav_explore"
+                android:icon="@drawable/ic_menu_explore"
+                android:title="Explore" />
+
             <item
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_menu_logout"
                 android:title="Log Out" />
+
         </menu>
     </item>
 

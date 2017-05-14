@@ -39,6 +39,8 @@ import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
+import com.github.chrisbanes.photoview.OnPhotoTapListener;
+import com.github.chrisbanes.photoview.PhotoViewAttacher;
 import com.techurity.a27memes.app.AppController;
 
 import java.io.BufferedInputStream;
@@ -59,6 +61,9 @@ public class ViewImageActivity extends AppCompatActivity {
     LinearLayout layout;
     String image_url;
     ImageRequest request;
+    PhotoViewAttacher attacher;
+
+    File input_file;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,14 +91,15 @@ public class ViewImageActivity extends AppCompatActivity {
         if (imageLoader == null)
             imageLoader = AppController.getInstance().getImageLoader();
 
-        image.setOnClickListener(new View.OnClickListener() {
+        image.setImageUrl(image_url, imageLoader);
+        attacher = new PhotoViewAttacher(image);
+
+        attacher.setOnPhotoTapListener(new OnPhotoTapListener() {
             @Override
-            public void onClick(View view) {
+            public void onPhotoTap(ImageView view, float x, float y) {
                 fullScreen();
             }
         });
-
-        image.setImageUrl(image_url, imageLoader);
 
         progressDialog.dismiss();
 
@@ -152,54 +158,17 @@ public class ViewImageActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-       /* switch (item.getItemId()) {
+        if(item.getItemId() == R.id.mShare){
+            new ShareCreator().execute(image_url);
 
-            case R.id.mShare:
+        }
 
-                Bitmap bitmap = image.getDrawingCache();
-                File root = Environment.getExternalStorageDirectory();
-                File cachePath = new File(root.getAbsolutePath() + "/DCIM/Camera/image.jpg");
-                cachePath.setReadable(true);
-
-                try {
-                    cachePath.createNewFile();
-                    FileOutputStream ostream = new FileOutputStream(root);
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
-                    ostream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-                sharingIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                sharingIntent.setType("image/jpeg");
-                Uri picUri = Uri.parse("content://"+cachePath.getAbsolutePath());
-                Log.d("Path", picUri.toString());
-                sharingIntent.setData(picUri);
-                sharingIntent.putExtra(Intent.EXTRA_STREAM, picUri);
-                startActivity(Intent.createChooser(sharingIntent, "Share MEME Via"));*/
-
-        if (item.getItemId() == R.id.mDownload) {
-/*
-            request = new ImageRequest(image_url, new Response.Listener<Bitmap>() {
-                @Override
-                public void onResponse(Bitmap bitmap) {
-                    MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "27Memes", "A precious MEME from 27Memes");
-                    Log.d("Download", "Saved");
-                }
-            }, 0, 0, Bitmap.Config.ARGB_8888, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError volleyError) {
-                    Log.d("Download", "Error Occurred");
-                }
-            });*/
-
+        else if (item.getItemId() == R.id.mDownload) {
 
             if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
 
                 Log.d("First", "First");
                 if (!ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-//                    AppController.getInstance().addToRequestQueue(request);
                     new ImageDownloader().execute(image_url);
                     Toast.makeText(getApplicationContext(), "Meme Saved.", Toast.LENGTH_SHORT).show();
                 } else {
@@ -208,8 +177,6 @@ public class ViewImageActivity extends AppCompatActivity {
 
             } else {
                 new ImageDownloader().execute(image_url);
-//                AppController.getInstance().addToRequestQueue(request);
-//                Toast.makeText(getApplicationContext(), "Meme Saved.", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -224,8 +191,6 @@ public class ViewImageActivity extends AppCompatActivity {
             case 200:
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    AppController.getInstance().addToRequestQueue(request);
-//                    Toast.makeText(getApplicationContext(), "Meme Saved.", Toast.LENGTH_SHORT).show();
                     new ImageDownloader().execute(image_url);
                 } else {
 
@@ -283,7 +248,75 @@ public class ViewImageActivity extends AppCompatActivity {
                 if (!app_folder.exists())
                     app_folder.mkdir();
 
-                File input_file = new File(app_folder, file_name+".jpg");
+                input_file = new File(app_folder, file_name+".jpg");
+
+                if(!input_file.exists()) {
+                    is = new BufferedInputStream(url.openStream(), 8192);
+                    byte[] data = new byte[1024];
+                    int total = 0;
+                    int count = 0;
+                    os = new FileOutputStream(input_file);
+                    while ((count = is.read(data)) != -1) {
+                        total += count;
+                        os.write(data, 0, count);
+                        int progress = (int) total * 100 / file_length;
+                        publishProgress(progress);
+                    }
+                }
+                else{
+                    return "MEME Already Exists";
+                }
+
+                is.close();
+                os.close();
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return "MEME Downloaded";
+
+        }
+    }
+
+    public class ShareCreator extends AsyncTask<String, Integer, String>{
+
+        ProgressDialog pd;
+        InputStream is;
+        OutputStream os;
+
+        @Override
+        protected void onPostExecute(String s) {
+            String file_name = image_url.substring(image_url.lastIndexOf('/') + 1, image_url.lastIndexOf(".jpg")+4);
+            Uri picUri = Uri.parse("sdcard/DCIM/27Memes/"+file_name);
+            Intent sendIntent = new Intent(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_STREAM, picUri);
+            sendIntent.setType("image/jpg");
+            startActivity(Intent.createChooser(sendIntent, "Share MEME Via"));
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            String path = params[0];
+
+            String file_name = path.substring(path.lastIndexOf('/') + 1, path.lastIndexOf(".jpg"));
+
+            int file_length = 0;
+            try {
+                URL url = new URL(path);
+                URLConnection connection = url.openConnection();
+                connection.connect();
+                file_length = connection.getContentLength();
+                File app_folder = new File("sdcard/DCIM/27Memes");
+
+                if (!app_folder.exists())
+                    app_folder.mkdir();
+
+                input_file = new File(app_folder, file_name+".jpg");
+
                 if(!input_file.exists()) {
                     is = new BufferedInputStream(url.openStream(), 8192);
                     byte[] data = new byte[1024];

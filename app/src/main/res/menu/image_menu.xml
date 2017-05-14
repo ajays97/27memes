@@ -6,13 +6,13 @@
         android:id="@+id/mDownload"
         app:showAsAction="always"
         android:title="DOWNLOAD MEME" />
-<!--
+
     <item
         android:id="@+id/mShare"
         app:showAsAction="always"
         android:title="SHARE"
         android:icon="@drawable/ic_bar_share"
         android:actionProviderClass=
-            "android.widget.ShareActionProvider" />-->
+            "android.widget.ShareActionProvider" />
 
 </menu>

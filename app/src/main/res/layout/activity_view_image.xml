@@ -11,6 +11,7 @@
     tools:context="com.techurity.a27memes.ViewImageActivity">
 
     <com.android.volley.toolbox.NetworkImageView
+        android:scaleType="matrix"
         android:id="@+id/view_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
