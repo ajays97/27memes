@@ -1,7 +1,10 @@
 package com.techurity.a27memes;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -52,6 +55,30 @@ public class LoginActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+
+                if (ContextCompat.checkSelfPermission(LoginActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED &&
+                        ContextCompat.checkSelfPermission(LoginActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+
+                    if (!ActivityCompat.shouldShowRequestPermissionRationale(LoginActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
+                            ActivityCompat.shouldShowRequestPermissionRationale(LoginActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+
+                        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+                        if (accessToken != null) {
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                            finish();
+                        } else
+                            login.setVisibility(View.VISIBLE);
+
+
+                    } else {
+                        ActivityCompat.requestPermissions(LoginActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE}, 200);
+                    }
+
+                } else {
+
+
+
+                }
 
                 AccessToken accessToken = AccessToken.getCurrentAccessToken();
                 if (accessToken != null) {

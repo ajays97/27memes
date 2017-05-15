@@ -33,6 +33,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
 
 import com.facebook.GraphRequest;
@@ -124,9 +125,10 @@ public class MainActivity extends AppCompatActivity
                     String page = data.getJSONObject(0).getString("message");
                     mainUrl = "https:graph.facebook.com/v2.9/" + page + "/feed?fields=full_picture,from,created_time,message&limit=5&access_token=" + AccessToken.getCurrentAccessToken().getToken();
                     if (page.equals("1713086835593817")) {
-                        updateFeed(mainUrl, true);
+                        updateFeed();
+                        //updateFeed(mainUrl, true);
                     } else
-                        updateFeed(mainUrl, false);
+                        updateFeed();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -149,7 +151,7 @@ public class MainActivity extends AppCompatActivity
         loadMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loadMoreMemes(next, page_check);
+                loadMoreMemes();
             }
         });
 
@@ -200,7 +202,7 @@ public class MainActivity extends AppCompatActivity
 
 
     }
-
+/*
     public void updateFeed(String page, final boolean check) {
 
         page_check = check;
@@ -214,52 +216,52 @@ public class MainActivity extends AppCompatActivity
         feedList.addFooterView(footer);
         cal = Calendar.getInstance();
 
-        JsonObjectRequest objectRequest = new JsonObjectRequest(page, null,new Response.Listener<JSONObject>() {
+        JsonObjectRequest objectRequest = new JsonObjectRequest(page, null, new Response.Listener<JSONObject>() {
 
-                    String tags;
+            String tags;
 
-                    @Override
-                    public void onResponse(JSONObject jsonObject) {
-                        Log.d("MainActivity", "Data Fetched");
+            @Override
+            public void onResponse(JSONObject jsonObject) {
+                Log.d("MainActivity", "Data Fetched");
 
-                        JSONArray jsonArray = null;
-                        try {
-                            jsonArray = jsonObject.getJSONArray("data");
+                JSONArray jsonArray = null;
+                try {
+                    jsonArray = jsonObject.getJSONArray("data");
 
-                            nextObj = jsonObject.getJSONObject("paging");
-                            next = nextObj.getString("next");
-                            for (int i = 0; i < 5; i++) {
-                                JSONObject postObj = jsonArray.getJSONObject(i);
-                                JSONObject fromObj = postObj.getJSONObject("from");
-                                String creator = fromObj.getString("name");
-                                String image_url = postObj.getString("full_picture");
-                                String post_id = postObj.getString("id");
-                                String created_at = postObj.getString("created_time");
-                                SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.ENGLISH);
-                                Date dates = date.parse(created_at);
-                                cal.setTimeInMillis(dates.getTime());
-                                String created_time = "" + cal.getTime();
-                                if (check)
-                                    tags = postObj.getString("message");
-                                else
-                                    tags = "No Tags";
-                                feedAdapter.add(new Post(post_id, image_url, creator,
-                                        created_time.substring(0, created_time.indexOf(':') + 3) + created_time.substring(created_time.lastIndexOf(' '), created_time.lastIndexOf(' ') + 5),
-                                        tags));
-                                Log.d("Adding", "After Request");
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Toast.makeText(getApplicationContext(), "An Error Occurred", Toast.LENGTH_SHORT).show();
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        } finally {
-                            feedAdapter.notifyDataSetChanged();
-                            hidePDialog();
-                        }
-
+                    nextObj = jsonObject.getJSONObject("paging");
+                    next = nextObj.getString("next");
+                    for (int i = 0; i < 5; i++) {
+                        JSONObject postObj = jsonArray.getJSONObject(i);
+                        JSONObject fromObj = postObj.getJSONObject("from");
+                        String creator = fromObj.getString("name");
+                        String image_url = postObj.getString("full_picture");
+                        String post_id = postObj.getString("id");
+                        String created_at = postObj.getString("created_time");
+                        SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.ENGLISH);
+                        Date dates = date.parse(created_at);
+                        cal.setTimeInMillis(dates.getTime());
+                        String created_time = "" + cal.getTime();
+                        if (check)
+                            tags = postObj.getString("message");
+                        else
+                            tags = "No Tags";
+                        feedAdapter.add(new Post(post_id, image_url, creator,
+                                created_time.substring(0, created_time.indexOf(':') + 3) + created_time.substring(created_time.lastIndexOf(' '), created_time.lastIndexOf(' ') + 5),
+                                tags));
+                        Log.d("Adding", "After Request");
                     }
-                }, new Response.ErrorListener() {
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(), "An Error Occurred", Toast.LENGTH_SHORT).show();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                } finally {
+                    feedAdapter.notifyDataSetChanged();
+                    hidePDialog();
+                }
+
+            }
+        }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 Log.v("Output", volleyError.toString());
@@ -268,8 +270,61 @@ public class MainActivity extends AppCompatActivity
 
         AppController.getInstance().addToRequestQueue(objectRequest);
 
-    }
+    }*/
 
+    public void updateFeed() {
+
+        postList = new ArrayList<Post>();
+        feedAdapter = new TimelineAdapter(getApplicationContext(), postList);
+        feedList.setAdapter(feedAdapter);
+
+        feedList.addFooterView(footer);
+        cal = Calendar.getInstance();
+
+        Bundle parameters = new Bundle();
+        parameters.putString("limit", "5");
+        parameters.putString("fields", "full_picture,from,message,created_time");
+
+        GraphRequest request = new GraphRequest(AccessToken.getCurrentAccessToken(), "/1713086835593817/feed", parameters, HttpMethod.GET, new GraphRequest.Callback() {
+            @Override
+            public void onCompleted(GraphResponse response) {
+                lastResponse = response;
+                JSONObject mainObj = response.getJSONObject();
+                try {
+                    JSONArray jsonArray = mainObj.getJSONArray("data");
+                    for (int i = 0; i < 5; i++) {
+                        JSONObject postObj = jsonArray.getJSONObject(i);
+                        JSONObject fromObj = postObj.getJSONObject("from");
+                        String creator = fromObj.getString("name");
+                        String image_url = postObj.getString("full_picture");
+                        String post_id = postObj.getString("id");
+                        String created_at = postObj.getString("created_time");
+                        SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.ENGLISH);
+                        Date dates = date.parse(created_at);
+                        cal.setTimeInMillis(dates.getTime());
+                        String created_time = "" + cal.getTime();
+                        tags = postObj.getString("message");
+
+                        feedAdapter.add(new Post(post_id, image_url, creator,
+                                created_time.substring(0, created_time.indexOf(':') + 3) + created_time.substring(created_time.lastIndexOf(' '), created_time.lastIndexOf(' ') + 5),
+                                tags));
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                } finally {
+                    feedAdapter.notifyDataSetChanged();
+                    hidePDialog();
+                }
+
+            }
+        });
+        request.executeAsync();
+
+    }
+/*
     private void loadMoreMemes(String nextUrl, final boolean page_check) {
 
 
@@ -323,6 +378,56 @@ public class MainActivity extends AppCompatActivity
             });
 
             AppController.getInstance().addToRequestQueue(objectRequest2);
+        }
+        feedList.addFooterView(footer);
+
+    }*/
+
+    public void loadMoreMemes() {
+
+        feedList.removeFooterView(footer);
+
+        if (lastResponse != null) {
+            GraphRequest newRequest = lastResponse.getRequestForPagedResults(GraphResponse.PagingDirection.NEXT);
+            if (newRequest != null) {
+                newRequest.setCallback(new GraphRequest.Callback() {
+                    @Override
+                    public void onCompleted(GraphResponse graphResponse) {
+                        lastResponse = graphResponse;
+                        JSONObject mainObj = graphResponse.getJSONObject();
+                        try {
+                            JSONArray jsonArray = mainObj.getJSONArray("data");
+
+                            for (int i = 0; i < 5; i++) {
+                                JSONObject postObj = jsonArray.getJSONObject(i);
+                                JSONObject fromObj = postObj.getJSONObject("from");
+                                String creator = fromObj.getString("name");
+                                String image_url = postObj.getString("full_picture");
+                                String post_id = postObj.getString("id");
+                                String created_at = postObj.getString("created_time");
+                                SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.ENGLISH);
+                                Date dates = date.parse(created_at);
+                                cal.setTimeInMillis(dates.getTime());
+                                String created_time = "" + cal.getTime();
+                                tags = postObj.getString("message");
+
+                                feedAdapter.add(new Post(post_id, image_url, creator,
+                                        created_time.substring(0, created_time.indexOf(':') + 3) + created_time.substring(created_time.lastIndexOf(' '), created_time.lastIndexOf(' ') + 5),
+                                        tags));
+                            }
+
+                        } catch (JSONException e) {
+                            Toast.makeText(getApplicationContext(), "No More Memes", Toast.LENGTH_SHORT).show();
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        } finally {
+                            feedAdapter.notifyDataSetChanged();
+                            hidePDialog();
+                        }
+                    }
+                });
+                newRequest.executeAsync();
+            }
         }
         feedList.addFooterView(footer);
 
@@ -388,6 +493,7 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.mRefresh) {
             postList.clear();
+            lastResponse = null;
             next = null;
             feedList.removeFooterView(footer);
             request.executeAsync();
