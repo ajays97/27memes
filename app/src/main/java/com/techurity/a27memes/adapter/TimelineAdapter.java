@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -23,9 +24,11 @@ import java.util.List;
  * Created by Ajay Srinivas on 5/11/2017.
  */
 
-public class TimelineAdapter extends ArrayAdapter<Post>{
+public class TimelineAdapter extends ArrayAdapter<Post> {
 
     private LayoutInflater inflater;
+
+    TextView creator, created_at, tags;
 
     private List<Post> posts;
 
@@ -64,8 +67,15 @@ public class TimelineAdapter extends ArrayAdapter<Post>{
 
         NetworkImageView feedImage = (NetworkImageView) convertView
                 .findViewById(R.id.feed_image);
+        creator = (TextView) convertView.findViewById(R.id.creator);
+        created_at = (TextView) convertView.findViewById(R.id.created_at);
+        tags = (TextView) convertView.findViewById(R.id.tags);
 
         Post post = posts.get(position);
+
+        creator.setText(post.getCreator());
+        created_at.setText(post.getCreated_at());
+        tags.setText(post.getTags());
 
         feedImage.setImageUrl(post.getImage_url(), imageLoader);
 

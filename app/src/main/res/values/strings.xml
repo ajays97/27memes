@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">27memes</string>
+    <string name="app_name">27Memes</string>
     <string name="categories">Categories</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -15,5 +15,8 @@
     <string name="dummy_content">27\nMemes</string>
 
     <string name="title_activity_image_view">ImageViewActivity</string>
+    
+    <string name="admob_app_id">ca-app-pub-2819514375619003~1342858770</string>
+    <string name="timeline_banner_id">ca-app-pub-2819514375619003/4296325175</string>
 
 </resources>

@@ -5,13 +5,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.DataSetObserver;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.AppCompatSpinner;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,24 +20,30 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
-import android.widget.AbsListView;
+
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.SpinnerAdapter;
+
 import android.widget.Toast;
 
-import com.android.volley.Request;
+
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.facebook.AccessToken;
+
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+
 import com.facebook.HttpMethod;
 import com.facebook.login.LoginManager;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.techurity.a27memes.adapter.TimelineAdapter;
 import com.techurity.a27memes.app.AppController;
 import com.techurity.a27memes.model.Post;
@@ -49,19 +52,33 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 //Page ID = 1713086835593817
-//Sarcasm ID = 1515871602074952
+//Runtime ID = 133352060545254
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    String mainUrl = "https:graph.facebook.com/v2.9/1713086835593817/feed?fields=full_picture,from,created_time,message&limit=5&access_token=" + AccessToken.getCurrentAccessToken().getToken();
+
     JsonObjectRequest objectRequest2 = null;
+    private AdView mAdView;
+
+    boolean doubleBackToExitPressedOnce = false;
 
     View footer;
     Button loadMore;
+
+    GraphRequest request;
+
+    Calendar cal;
+    String tags;
 
     ListView feedList;
     TimelineAdapter feedAdapter;
@@ -72,6 +89,7 @@ public class MainActivity extends AppCompatActivity
     JSONObject nextObj;
 
     String next = null;
+    boolean page_check;
 
     SwipeRefreshLayout refreshLayout;
     SwipeRefreshLayout.OnRefreshListener refreshListener;
@@ -82,15 +100,39 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        MobileAds.initialize(this, "ca-app-pub-2819514375619003~1342858770");
 
         feedList = (ListView) findViewById(R.id.feedList);
         feedAdapter = new TimelineAdapter(this, postList);
 
         feedList.setAdapter(feedAdapter);
 
+
         pDialog = new ProgressDialog(this);
         pDialog.setMessage("Loading...");
         pDialog.show();
+
+        Bundle b = new Bundle();
+        b.putString("limit", "1");
+        b.putString("fields", "message");
+        request = new GraphRequest(AccessToken.getCurrentAccessToken(), "/133352060545254/posts", b, HttpMethod.GET, new GraphRequest.Callback() {
+            @Override
+            public void onCompleted(GraphResponse response) {
+                try {
+                    JSONObject mainObj = response.getJSONObject();
+                    JSONArray data = mainObj.getJSONArray("data");
+                    String page = data.getJSONObject(0).getString("message");
+                    mainUrl = "https:graph.facebook.com/v2.9/" + page + "/feed?fields=full_picture,from,created_time,message&limit=5&access_token=" + AccessToken.getCurrentAccessToken().getToken();
+                    if (page.equals("1713086835593817")) {
+                        updateFeed(mainUrl, true);
+                    } else
+                        updateFeed(mainUrl, false);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        request.executeAsync();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -107,11 +149,10 @@ public class MainActivity extends AppCompatActivity
         loadMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loadMoreMemes(next);
+                loadMoreMemes(next, page_check);
             }
         });
 
-        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.refreshLayout);
         refreshListener = new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -119,22 +160,10 @@ public class MainActivity extends AppCompatActivity
                 lastResponse = null;
                 next = null;
                 feedList.removeFooterView(footer);
-                updateFeed();
+                request.executeAsync();
                 refreshLayout.setRefreshing(false);
             }
         };
-
-        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                postList.clear();
-                lastResponse = null;
-                next = null;
-                feedList.removeFooterView(footer);
-                updateFeed();
-                refreshLayout.setRefreshing(false);
-            }
-        });
 
         feedList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -149,35 +178,81 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        updateFeed();
+/*
+        mAdView = (AdView) findViewById(R.id.adView);
+        mAdView.setVisibility(View.GONE);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.setAdListener(new AdListener() {
+            @Override
+            public void onAdFailedToLoad(int i) {
+                mAdView.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+                if (mAdView.getVisibility() == View.GONE)
+                    mAdView.setVisibility(View.VISIBLE);
+            }
+
+        });
+        mAdView.loadAd(adRequest);*/
+
 
     }
 
-    public void updateFeed() {
+    public void updateFeed(String page, final boolean check) {
+
+        page_check = check;
+
+        Log.d("Boolean Check", "" + page_check);
+
         postList = new ArrayList<Post>();
         feedAdapter = new TimelineAdapter(getApplicationContext(), postList);
         feedList.setAdapter(feedAdapter);
 
         feedList.addFooterView(footer);
+        cal = Calendar.getInstance();
 
+        JsonObjectRequest objectRequest = new JsonObjectRequest(page, null,new Response.Listener<JSONObject>() {
 
-        JsonObjectRequest objectRequest = new JsonObjectRequest("https:graph.facebook.com/v2.9/1515871602074952/feed?fields=full_picture&limit=5&access_token=" + AccessToken.getCurrentAccessToken().getToken(), null,
-                new Response.Listener<JSONObject>() {
+                    String tags;
+
                     @Override
                     public void onResponse(JSONObject jsonObject) {
+                        Log.d("MainActivity", "Data Fetched");
+
                         JSONArray jsonArray = null;
                         try {
                             jsonArray = jsonObject.getJSONArray("data");
+
                             nextObj = jsonObject.getJSONObject("paging");
                             next = nextObj.getString("next");
                             for (int i = 0; i < 5; i++) {
                                 JSONObject postObj = jsonArray.getJSONObject(i);
+                                JSONObject fromObj = postObj.getJSONObject("from");
+                                String creator = fromObj.getString("name");
                                 String image_url = postObj.getString("full_picture");
                                 String post_id = postObj.getString("id");
-                                feedAdapter.add(new Post(post_id, image_url));
+                                String created_at = postObj.getString("created_time");
+                                SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.ENGLISH);
+                                Date dates = date.parse(created_at);
+                                cal.setTimeInMillis(dates.getTime());
+                                String created_time = "" + cal.getTime();
+                                if (check)
+                                    tags = postObj.getString("message");
+                                else
+                                    tags = "No Tags";
+                                feedAdapter.add(new Post(post_id, image_url, creator,
+                                        created_time.substring(0, created_time.indexOf(':') + 3) + created_time.substring(created_time.lastIndexOf(' '), created_time.lastIndexOf(' ') + 5),
+                                        tags));
+                                Log.d("Adding", "After Request");
                             }
                         } catch (JSONException e) {
+                            e.printStackTrace();
                             Toast.makeText(getApplicationContext(), "An Error Occurred", Toast.LENGTH_SHORT).show();
+                        } catch (ParseException e) {
+                            e.printStackTrace();
                         } finally {
                             feedAdapter.notifyDataSetChanged();
                             hidePDialog();
@@ -195,7 +270,8 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void loadMoreMemes(String nextUrl) {
+    private void loadMoreMemes(String nextUrl, final boolean page_check) {
+
 
         feedList.removeFooterView(footer);
 
@@ -207,18 +283,33 @@ public class MainActivity extends AppCompatActivity
 
                             try {
                                 JSONArray jsonArray = jsonObject.getJSONArray("data");
+
                                 nextObj = jsonObject.getJSONObject("paging");
                                 for (int i = 0; i < 5; i++) {
                                     JSONObject postObj = jsonArray.getJSONObject(i);
+                                    JSONObject fromObj = postObj.getJSONObject("from");
+                                    String creator = fromObj.getString("name");
                                     String image_url = postObj.getString("full_picture");
                                     String post_id = postObj.getString("id");
-                                    if (image_url != null)
-                                        feedAdapter.add(new Post(post_id, image_url));
+                                    String created_at = postObj.getString("created_time");
+                                    SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.ENGLISH);
+                                    Date dates = date.parse(created_at);
+                                    cal.setTimeInMillis(dates.getTime());
+                                    String created_time = "" + cal.getTime();
+                                    if (page_check)
+                                        tags = postObj.getString("message");
+                                    else
+                                        tags = "No Tags";
+                                    feedAdapter.add(new Post(post_id, image_url, creator,
+                                            created_time.substring(0, created_time.indexOf(':') + 3) + created_time.substring(created_time.lastIndexOf(' '), created_time.lastIndexOf(' ') + 5),
+                                            tags));
                                 }
                                 next = nextObj.getString("next");
                             } catch (JSONException e) {
                                 Log.d("LOADMORE", e.toString());
                                 next = null;
+                            } catch (ParseException e) {
+                                e.printStackTrace();
                             } finally {
                                 feedAdapter.notifyDataSetChanged();
                             }
@@ -230,6 +321,7 @@ public class MainActivity extends AppCompatActivity
 
                 }
             });
+
             AppController.getInstance().addToRequestQueue(objectRequest2);
         }
         feedList.addFooterView(footer);
@@ -239,14 +331,14 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
-        AppController.getInstance().getRequestQueue().cancelAll("MyTag");
+        AppController.getInstance().cancelPendingRequests("MyTag");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         hidePDialog();
-        AppController.getInstance().getRequestQueue().cancelAll("MyTag");
+        AppController.getInstance().cancelPendingRequests("MyTag");
     }
 
     private void hidePDialog() {
@@ -261,9 +353,22 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
+        } else if (doubleBackToExitPressedOnce) {
             super.onBackPressed();
+            return;
         }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Press Again to Exit 27Memes", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce = false;
+            }
+        }, 2000);
+
     }
 
     @Override
@@ -282,7 +387,11 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.mRefresh) {
-            refreshListener.onRefresh();
+            postList.clear();
+            next = null;
+            feedList.removeFooterView(footer);
+            request.executeAsync();
+
         } else if (id == R.id.mLogout) {
             LoginManager.getInstance().logOut();
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
@@ -315,7 +424,7 @@ public class MainActivity extends AppCompatActivity
             LoginManager.getInstance().logOut();
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             finish();
-        }else if (id == R.id.nav_explore){
+        } else if (id == R.id.nav_explore) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("Explore Coming Soon...");
             builder.setCancelable(true);
@@ -330,10 +439,46 @@ public class MainActivity extends AppCompatActivity
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
 
+        } else if (id == R.id.nav_categories) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Categories Coming Soon...");
+            builder.setCancelable(true);
+
+            builder.setPositiveButton("I'm Waiting", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.cancel();
+                }
+            });
+
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+
+        } else if (id == R.id.nav_signup) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Memeists Feature Coming Soon...");
+            builder.setCancelable(true);
+
+            builder.setPositiveButton("I'm Excited", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.cancel();
+                }
+            });
+
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    private void setMainUrl(String pageId) {
+        mainUrl = "https:graph.facebook.com/v2.9/" + pageId + "/feed?fields=full_picture,from,created_time,message&limit=5&access_token=" + AccessToken.getCurrentAccessToken().getToken();
+        Log.v("Main URL", mainUrl);
+        Toast.makeText(getApplicationContext(), mainUrl, Toast.LENGTH_LONG).show();
+    }
+
 }

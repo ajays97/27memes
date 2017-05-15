@@ -25,6 +25,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -68,6 +69,7 @@ public class ViewImageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         setContentView(R.layout.activity_view_image);
 
         ActionBar bar = getSupportActionBar();
@@ -158,21 +160,19 @@ public class ViewImageActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        if(item.getItemId() == R.id.mShare){
+        if (item.getItemId() == R.id.mShare) {
             new ShareCreator().execute(image_url);
 
-        }
+        } else if (item.getItemId() == R.id.mDownload) {
 
-        else if (item.getItemId() == R.id.mDownload) {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED &&
+                    ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
 
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
-
-                Log.d("First", "First");
-                if (!ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                if (!ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
+                        ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
                     new ImageDownloader().execute(image_url);
-                    Toast.makeText(getApplicationContext(), "Meme Saved.", Toast.LENGTH_SHORT).show();
                 } else {
-                    ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 200);
+                    ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE}, 200);
                 }
 
             } else {
@@ -248,9 +248,9 @@ public class ViewImageActivity extends AppCompatActivity {
                 if (!app_folder.exists())
                     app_folder.mkdir();
 
-                input_file = new File(app_folder, file_name+".jpg");
+                input_file = new File(app_folder, file_name + ".jpg");
 
-                if(!input_file.exists()) {
+                if (!input_file.exists()) {
                     is = new BufferedInputStream(url.openStream(), 8192);
                     byte[] data = new byte[1024];
                     int total = 0;
@@ -261,9 +261,9 @@ public class ViewImageActivity extends AppCompatActivity {
                         os.write(data, 0, count);
                         int progress = (int) total * 100 / file_length;
                         publishProgress(progress);
+                        Log.d("File Present", "" + input_file.exists());
                     }
-                }
-                else{
+                } else {
                     return "MEME Already Exists";
                 }
 
@@ -276,12 +276,12 @@ public class ViewImageActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            return "MEME Downloaded";
+            return "MEME Saved";
 
         }
     }
 
-    public class ShareCreator extends AsyncTask<String, Integer, String>{
+    public class ShareCreator extends AsyncTask<String, Integer, String> {
 
         ProgressDialog pd;
         InputStream is;
@@ -289,8 +289,8 @@ public class ViewImageActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String s) {
-            String file_name = image_url.substring(image_url.lastIndexOf('/') + 1, image_url.lastIndexOf(".jpg")+4);
-            Uri picUri = Uri.parse("sdcard/DCIM/27Memes/"+file_name);
+            String file_name = image_url.substring(image_url.lastIndexOf('/') + 1, image_url.lastIndexOf(".jpg") + 4);
+            Uri picUri = Uri.parse("sdcard/DCIM/27Memes/" + file_name);
             Intent sendIntent = new Intent(Intent.ACTION_SEND);
             sendIntent.putExtra(Intent.EXTRA_STREAM, picUri);
             sendIntent.setType("image/jpg");
@@ -315,9 +315,9 @@ public class ViewImageActivity extends AppCompatActivity {
                 if (!app_folder.exists())
                     app_folder.mkdir();
 
-                input_file = new File(app_folder, file_name+".jpg");
+                input_file = new File(app_folder, file_name + ".jpg");
 
-                if(!input_file.exists()) {
+                if (!input_file.exists()) {
                     is = new BufferedInputStream(url.openStream(), 8192);
                     byte[] data = new byte[1024];
                     int total = 0;
@@ -329,9 +329,8 @@ public class ViewImageActivity extends AppCompatActivity {
                         int progress = (int) total * 100 / file_length;
                         publishProgress(progress);
                     }
-                }
-                else{
-                    return "MEME Already Exists";
+                } else {
+                    return null;
                 }
 
                 is.close();
@@ -343,7 +342,7 @@ public class ViewImageActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            return "MEME Downloaded";
+            return null;
 
         }
     }

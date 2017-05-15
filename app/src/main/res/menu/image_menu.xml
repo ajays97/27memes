@@ -5,7 +5,7 @@
     <item
         android:id="@+id/mDownload"
         app:showAsAction="always"
-        android:title="DOWNLOAD MEME" />
+        android:title="SAVE MEME" />
 
     <item
         android:id="@+id/mShare"

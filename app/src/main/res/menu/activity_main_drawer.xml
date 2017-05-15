@@ -24,9 +24,19 @@
         <menu>
 
             <item
+                android:id="@+id/nav_categories"
+                android:icon="@drawable/ic_menu_categories"
+                android:title="Categories" />
+
+            <item
                 android:id="@+id/nav_explore"
                 android:icon="@drawable/ic_menu_explore"
                 android:title="Explore" />
+
+            <item
+                android:id="@+id/nav_signup"
+                android:icon="@drawable/ic_menu_signup"
+                android:title="Be A Memeist" />
 
             <item
                 android:id="@+id/nav_logout"
