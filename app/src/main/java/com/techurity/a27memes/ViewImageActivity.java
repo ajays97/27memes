@@ -261,7 +261,6 @@ public class ViewImageActivity extends AppCompatActivity {
                         os.write(data, 0, count);
                         int progress = (int) total * 100 / file_length;
                         publishProgress(progress);
-                        Log.d("File Present", "" + input_file.exists());
                     }
                 } else {
                     return "MEME Already Exists";
