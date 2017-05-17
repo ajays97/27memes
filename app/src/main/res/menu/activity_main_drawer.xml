@@ -39,6 +39,11 @@
                 android:title="Be A Memeist" />
 
             <item
+                android:id="@+id/nav_likeus"
+                android:icon="@drawable/ic_menu_likeus"
+                android:title="Like Us on Facebook" />
+
+            <item
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_menu_logout"
                 android:title="Log Out" />

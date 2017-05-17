@@ -15,11 +15,10 @@
         android:id="@+id/feedList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:dividerHeight="10dp"
+        android:dividerHeight="5dp"
         android:divider="@color/colorDivider"/>
 
     <com.google.android.gms.ads.AdView
-        android:visibility="invisible"
         android:id="@+id/adView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

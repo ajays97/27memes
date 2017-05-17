@@ -3,6 +3,8 @@ package com.techurity.a27memes.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.text.Layout;
+import android.text.Spannable;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +30,7 @@ public class TimelineAdapter extends ArrayAdapter<Post> {
 
     private LayoutInflater inflater;
 
-    TextView creator, created_at, tags;
+    TextView creator, created_at, tags, message;
 
     private List<Post> posts;
 
@@ -41,7 +43,7 @@ public class TimelineAdapter extends ArrayAdapter<Post> {
 
     @Override
     public int getCount() {
-        return posts.size();
+        return posts.size() + 1;
     }
 
     @Override
@@ -59,23 +61,31 @@ public class TimelineAdapter extends ArrayAdapter<Post> {
 
         if (inflater == null)
             inflater = LayoutInflater.from(getContext());
-        if (convertView == null)
-            convertView = inflater.inflate(R.layout.feed_row, null);
+
+        if (position % 4 == 0){
+
+        }
+
+            if (convertView == null)
+                convertView = inflater.inflate(R.layout.feed_row, null);
 
         if (imageLoader == null)
             imageLoader = AppController.getInstance().getImageLoader();
 
         NetworkImageView feedImage = (NetworkImageView) convertView
                 .findViewById(R.id.feed_image);
+        feedImage.setDefaultImageResId(R.drawable.loading);
         creator = (TextView) convertView.findViewById(R.id.creator);
         created_at = (TextView) convertView.findViewById(R.id.created_at);
         tags = (TextView) convertView.findViewById(R.id.tags);
+        message = (TextView) convertView.findViewById(R.id.message);
 
         Post post = posts.get(position);
 
         creator.setText(post.getCreator());
         created_at.setText(post.getCreated_at());
         tags.setText(post.getTags());
+        message.setText(post.getMessage());
 
         feedImage.setImageUrl(post.getImage_url(), imageLoader);
 

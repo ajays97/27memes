@@ -11,17 +11,27 @@ public class Post {
     private String creator;
     private String created_at;
     private String tags;
+    private String message;
 
     public Post() {
 
     }
 
-    public Post(String post_id, String image_url, String creator, String created_at, String tags) {
+    public Post(String post_id, String image_url, String creator, String created_at, String message, String tags) {
         this.post_id = post_id;
         this.image_url = image_url;
         this.creator = creator;
         this.created_at = created_at;
         this.tags = tags;
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public String getPost_id() {
