@@ -2,6 +2,7 @@ package com.techurity.a27memes;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -146,7 +147,7 @@ public class MainActivity extends AppCompatActivity
                         updateFeed(page, false);
                 } catch (JSONException e) {
                     e.printStackTrace();
-                }catch (NullPointerException e){
+                } catch (NullPointerException e) {
                     Toast.makeText(getApplicationContext(), "Could not connect", Toast.LENGTH_SHORT).show();
                     pDialog.hide();
                 }
@@ -208,77 +209,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-
-/*
-    public void updateFeed(String page, final boolean check) {
-
-        page_check = check;
-
-        Log.d("Boolean Check", "" + page_check);
-
-        postList = new ArrayList<Post>();
-        feedAdapter = new TimelineAdapter(getApplicationContext(), postList);
-        feedList.setAdapter(feedAdapter);
-
-        feedList.addFooterView(footer);
-        cal = Calendar.getInstance();
-
-        JsonObjectRequest objectRequest = new JsonObjectRequest(page, null, new Response.Listener<JSONObject>() {
-
-            String tags;
-
-            @Override
-            public void onResponse(JSONObject jsonObject) {
-                Log.d("MainActivity", "Data Fetched");
-
-                JSONArray jsonArray = null;
-                try {
-                    jsonArray = jsonObject.getJSONArray("data");
-
-                    nextObj = jsonObject.getJSONObject("paging");
-                    next = nextObj.getString("next");
-                    for (int i = 0; i < 5; i++) {
-                        JSONObject postObj = jsonArray.getJSONObject(i);
-                        JSONObject fromObj = postObj.getJSONObject("from");
-                        String creator = fromObj.getString("name");
-                        String image_url = postObj.getString("full_picture");
-                        String post_id = postObj.getString("id");
-                        String created_at = postObj.getString("created_time");
-                        SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.ENGLISH);
-                        Date dates = date.parse(created_at);
-                        cal.setTimeInMillis(dates.getTime());
-                        String created_time = "" + cal.getTime();
-                        if (check)
-                            tags = postObj.getString("message");
-                        else
-                            tags = "No Tags";
-                        feedAdapter.add(new Post(post_id, image_url, creator,
-                                created_time.substring(0, created_time.indexOf(':') + 3) + created_time.substring(created_time.lastIndexOf(' '), created_time.lastIndexOf(' ') + 5),
-                                tags));
-                        Log.d("Adding", "After Request");
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Toast.makeText(getApplicationContext(), "An Error Occurred", Toast.LENGTH_SHORT).show();
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                } finally {
-                    feedAdapter.notifyDataSetChanged();
-                    hidePDialog();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                Log.v("Output", volleyError.toString());
-            }
-        });
-
-        AppController.getInstance().addToRequestQueue(objectRequest);
-
-    }*/
-
     public void updateFeed(String page, boolean check) {
 
         page_check = check;
@@ -305,8 +235,8 @@ public class MainActivity extends AppCompatActivity
                         JSONObject postObj = jsonArray.getJSONObject(i);
                         main_message = postObj.getString("message");
                         String creator = main_message.substring(0, main_message.indexOf("Mes"));
-                        String message = main_message.substring(main_message.indexOf("Message:")+8, main_message.indexOf("Tags:"));
-                        String tags = main_message.substring(main_message.indexOf("Tags:")+5, main_message.length());
+                        String message = main_message.substring(main_message.indexOf("Message:") + 8, main_message.indexOf("Tags:"));
+                        String tags = main_message.substring(main_message.indexOf("Tags:") + 5, main_message.length());
                         String image_url = postObj.getString("full_picture");
                         String post_id = postObj.getString("id");
                         String created_at = postObj.getString("created_time");
@@ -324,10 +254,9 @@ public class MainActivity extends AppCompatActivity
                     e.printStackTrace();
                 } catch (ParseException e) {
                     e.printStackTrace();
-                } catch(NullPointerException e){
+                } catch (NullPointerException e) {
                     Toast.makeText(getApplicationContext(), "Could not connect", Toast.LENGTH_SHORT).show();
-                }
-                finally {
+                } finally {
                     feedAdapter.notifyDataSetChanged();
                     hidePDialog();
                 }
@@ -337,64 +266,7 @@ public class MainActivity extends AppCompatActivity
         request.executeAsync();
 
     }
-/*
-    private void loadMoreMemes(String nextUrl, final boolean page_check) {
 
-
-        feedList.removeFooterView(footer);
-
-        if (nextUrl != null) {
-            objectRequest2 = new JsonObjectRequest(next, null,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject jsonObject) {
-
-                            try {
-                                JSONArray jsonArray = jsonObject.getJSONArray("data");
-
-                                nextObj = jsonObject.getJSONObject("paging");
-                                for (int i = 0; i < 5; i++) {
-                                    JSONObject postObj = jsonArray.getJSONObject(i);
-                                    JSONObject fromObj = postObj.getJSONObject("from");
-                                    String creator = fromObj.getString("name");
-                                    String image_url = postObj.getString("full_picture");
-                                    String post_id = postObj.getString("id");
-                                    String created_at = postObj.getString("created_time");
-                                    SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.ENGLISH);
-                                    Date dates = date.parse(created_at);
-                                    cal.setTimeInMillis(dates.getTime());
-                                    String created_time = "" + cal.getTime();
-                                    if (page_check)
-                                        tags = postObj.getString("message");
-                                    else
-                                        tags = "No Tags";
-                                    feedAdapter.add(new Post(post_id, image_url, creator,
-                                            created_time.substring(0, created_time.indexOf(':') + 3) + created_time.substring(created_time.lastIndexOf(' '), created_time.lastIndexOf(' ') + 5),
-                                            tags));
-                                }
-                                next = nextObj.getString("next");
-                            } catch (JSONException e) {
-                                Log.d("LOADMORE", e.toString());
-                                next = null;
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            } finally {
-                                feedAdapter.notifyDataSetChanged();
-                            }
-                        }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError volleyError) {
-                    Log.v("Output", volleyError.toString());
-
-                }
-            });
-
-            AppController.getInstance().addToRequestQueue(objectRequest2);
-        }
-        feedList.addFooterView(footer);
-
-    }*/
 
     public void loadMoreMemes(boolean check) {
 
@@ -418,8 +290,8 @@ public class MainActivity extends AppCompatActivity
                                 JSONObject postObj = jsonArray.getJSONObject(i);
                                 main_message = postObj.getString("message");
                                 String creator = main_message.substring(0, main_message.indexOf("Mes"));
-                                String message = main_message.substring(main_message.indexOf("Message:")+8, main_message.indexOf("Tags:"));
-                                String tags = main_message.substring(main_message.indexOf("Tags:")+5, main_message.length());
+                                String message = main_message.substring(main_message.indexOf("Message:") + 8, main_message.indexOf("Tags:"));
+                                String tags = main_message.substring(main_message.indexOf("Tags:") + 5, main_message.length());
                                 String image_url = postObj.getString("full_picture");
                                 String post_id = postObj.getString("id");
                                 String created_at = postObj.getString("created_time");
@@ -438,10 +310,9 @@ public class MainActivity extends AppCompatActivity
                             Toast.makeText(getApplicationContext(), "No More Memes", Toast.LENGTH_SHORT).show();
                         } catch (ParseException e) {
                             e.printStackTrace();
-                        } catch(NullPointerException e){
+                        } catch (NullPointerException e) {
                             Toast.makeText(getApplicationContext(), "Connection Lost", Toast.LENGTH_SHORT).show();
-                        }
-                        finally {
+                        } finally {
                             feedAdapter.notifyDataSetChanged();
 
                         }
@@ -534,20 +405,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-/*
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        } else */
         if (id == R.id.nav_logout) {
             LoginManager.getInstance().logOut();
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
@@ -568,36 +426,19 @@ public class MainActivity extends AppCompatActivity
             alertDialog.show();
 
         } else if (id == R.id.nav_categories) {
-            /*AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Categories Coming Soon...");
-            builder.setCancelable(true);
-
-            builder.setPositiveButton("I'm Waiting", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    dialogInterface.cancel();
-                }
-            });
-
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();*/
             startActivity(new Intent(MainActivity.this, CategoriesMain.class));
-
         } else if (id == R.id.nav_signup) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Memeists Feature Coming Soon...");
-            builder.setCancelable(true);
 
-            builder.setPositiveButton("I'm Excited", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    dialogInterface.cancel();
-                }
-            });
+            try {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("mailto:" + "the27memes@gmail.com"));
+                intent.putExtra(Intent.EXTRA_SUBJECT, "Become a Memeist - Get featured on 27Memes.");
+                intent.putExtra(Intent.EXTRA_TEXT, "I have attached my meme to go on 27Memes.\nName:\nMessage:\nTags:");
+                startActivity(intent);
+            } catch (ActivityNotFoundException e) {
+                Toast.makeText(getApplicationContext(), "Could not find GMail app installed", Toast.LENGTH_SHORT).show();
+            }
 
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();
-        } else if(id == R.id.nav_likeus){
+        } else if (id == R.id.nav_likeus) {
             try {
                 getPackageManager().getPackageInfo("com.facebook.katana", 0);
                 Intent fb = new Intent(Intent.ACTION_VIEW, Uri.parse("fb://page/1713086835593817"));
@@ -611,12 +452,6 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    private void setMainUrl(String pageId) {
-        mainUrl = "https:graph.facebook.com/v2.9/" + pageId + "/feed?fields=full_picture,from,created_time,message&limit=5&access_token=" + AccessToken.getCurrentAccessToken().getToken();
-        Log.v("Main URL", mainUrl);
-        Toast.makeText(getApplicationContext(), mainUrl, Toast.LENGTH_LONG).show();
     }
 
 }

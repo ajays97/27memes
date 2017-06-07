@@ -20,6 +20,7 @@
     <string name="timeline_banner_id">ca-app-pub-2819514375619003/4296325175</string>
     <string name="timeline_native_id">ca-app-pub-2819514375619003/1971653973</string>
     <string name="category_ad">ca-app-pub-2819514375619003/7271530776</string>
+    <string name="category_interAd">ca-app-pub-2819514375619003/5816647177</string>
 
     <string name="title_activity_categories_main">Categories</string>
     <string name="section_format">Hello World from section: %1$d</string>
