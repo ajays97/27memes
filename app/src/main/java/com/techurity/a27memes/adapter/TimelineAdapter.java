@@ -15,6 +15,9 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.NativeExpressAdView;
 import com.techurity.a27memes.R;
 import com.techurity.a27memes.app.AppController;
 import com.techurity.a27memes.model.Post;
@@ -29,6 +32,7 @@ import java.util.List;
 public class TimelineAdapter extends ArrayAdapter<Post> {
 
     private LayoutInflater inflater;
+    NativeExpressAdView adView;
 
     TextView creator, created_at, tags, message;
 
@@ -43,7 +47,7 @@ public class TimelineAdapter extends ArrayAdapter<Post> {
 
     @Override
     public int getCount() {
-        return posts.size() + 1;
+        return posts.size();
     }
 
     @Override
@@ -61,16 +65,21 @@ public class TimelineAdapter extends ArrayAdapter<Post> {
 
         if (inflater == null)
             inflater = LayoutInflater.from(getContext());
-
-        if (position % 4 == 0){
-
-        }
-
-            if (convertView == null)
-                convertView = inflater.inflate(R.layout.feed_row, null);
+        if (convertView == null)
+            convertView = inflater.inflate(R.layout.feed_row, null);
 
         if (imageLoader == null)
             imageLoader = AppController.getInstance().getImageLoader();
+/*
+
+        adView = (NativeExpressAdView) convertView.findViewById(R.id.nativeAd);
+
+        if (position % 6 == 0.000000) {
+            AdRequest adRequest = new AdRequest.Builder().build();
+            adView.loadAd(adRequest);
+            adView.setVisibility(View.VISIBLE);
+        }
+*/
 
         NetworkImageView feedImage = (NetworkImageView) convertView
                 .findViewById(R.id.feed_image);

@@ -4,7 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
@@ -56,9 +56,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".ViewImageActivity"
-            android:theme="@style/AppTheme"/>
+        <activity
+            android:name=".ViewImageActivity"
+            android:theme="@style/AppTheme" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -70,6 +70,10 @@
                 android:resource="@xml/fileprovider" />
         </provider>
 
+        <activity
+            android:name=".CategoriesMain"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".CategoryMemes"></activity>
     </application>
 
 </manifest>

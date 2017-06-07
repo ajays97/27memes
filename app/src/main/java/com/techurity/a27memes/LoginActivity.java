@@ -88,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
                     login.setVisibility(View.VISIBLE);
 
             }
-        }, 1000);
+        }, 800);
 
 
         callbackManager = CallbackManager.Factory.create();

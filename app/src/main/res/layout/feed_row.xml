@@ -1,35 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
     android:orientation="vertical">
 
     <RelativeLayout
-        android:padding="5dp"
-        android:background="@color/colorPrimaryDark"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:background="@color/colorPrimaryDark"
+        android:orientation="horizontal"
+        android:padding="5dp">
 
         <TextView
-            android:textStyle="bold"
             android:id="@+id/creator"
             style="@android:style/TextAppearance.DeviceDefault.Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:text="By: "
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/created_at"
             style="@android:style/TextAppearance.DeviceDefault.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
             android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
             android:text="Created At"
             android:textColor="@android:color/white" />
 
@@ -43,16 +44,16 @@
 
 
     <TextView
-        android:text="message"
-        android:textColor="@android:color/white"
-        style="@android:style/TextAppearance"
-        android:textStyle="italic"
         android:id="@+id/message"
-        android:layout_marginTop="5dp"
+        style="@android:style/TextAppearance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_marginTop="5dp"
+        android:text="message"
+        android:textColor="@android:color/white"
+        android:textStyle="italic" />
 
     <com.android.volley.toolbox.NetworkImageView
         android:id="@+id/feed_image"
@@ -60,22 +61,32 @@
         android:layout_height="300dp"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"/>
+        android:layout_marginRight="10dp" />
 
     <LinearLayout
-        android:background="@color/colorPrimaryDark"
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark"
+        android:orientation="vertical">
 
 
         <TextView
             android:id="@+id/tags"
-            android:layout_margin="7dp"
-            android:textColor="@android:color/white"
-            android:text="tags"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_margin="7dp"
+            android:text="tags"
+            android:textColor="@android:color/white" />
+<!--
+
+        <com.google.android.gms.ads.NativeExpressAdView
+            android:id="@+id/nativeAd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            ads:adSize="MEDIUM_RECTANGLE"
+            ads:adUnitId="ca-app-pub-2819514375619003/1971653973" />
+-->
 
     </LinearLayout>
 

@@ -48,6 +48,7 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.techurity.a27memes.adapter.TimelineAdapter;
 import com.techurity.a27memes.app.AppController;
 import com.techurity.a27memes.model.Post;
@@ -111,6 +112,8 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         MobileAds.initialize(this, "ca-app-pub-2819514375619003~1342858770");
+
+        System.out.println("Registration.onTokenRefresh TOKEN: " + FirebaseInstanceId.getInstance().getToken());
 
         feedList = (ListView) findViewById(R.id.feedList);
         feedAdapter = new TimelineAdapter(this, postList);
@@ -204,6 +207,8 @@ public class MainActivity extends AppCompatActivity
         mAdView.loadAd(adRequest);
 
     }
+
+
 /*
     public void updateFeed(String page, final boolean check) {
 
@@ -563,7 +568,7 @@ public class MainActivity extends AppCompatActivity
             alertDialog.show();
 
         } else if (id == R.id.nav_categories) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            /*AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("Categories Coming Soon...");
             builder.setCancelable(true);
 
@@ -575,7 +580,8 @@ public class MainActivity extends AppCompatActivity
             });
 
             AlertDialog alertDialog = builder.create();
-            alertDialog.show();
+            alertDialog.show();*/
+            startActivity(new Intent(MainActivity.this, CategoriesMain.class));
 
         } else if (id == R.id.nav_signup) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);

@@ -15,8 +15,13 @@
     <string name="dummy_content">27\nMemes</string>
 
     <string name="title_activity_image_view">ImageViewActivity</string>
-    
+
     <string name="admob_app_id">ca-app-pub-2819514375619003~1342858770</string>
     <string name="timeline_banner_id">ca-app-pub-2819514375619003/4296325175</string>
+    <string name="timeline_native_id">ca-app-pub-2819514375619003/1971653973</string>
+    <string name="category_ad">ca-app-pub-2819514375619003/7271530776</string>
+
+    <string name="title_activity_categories_main">Categories</string>
+    <string name="section_format">Hello World from section: %1$d</string>
 
 </resources>

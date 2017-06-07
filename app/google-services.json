@@ -1,0 +1,45 @@
+{
+  "project_info": {
+    "project_number": "911541934615",
+    "firebase_url": "https://a27memes.firebaseio.com",
+    "project_id": "a27memes",
+    "storage_bucket": "a27memes.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:911541934615:android:49b59d7bdf2915ac",
+        "android_client_info": {
+          "package_name": "com.techurity.a27memes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "911541934615-n9i0ru86ad2sc7nl6ljiv7qgu5s48tt7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4sDXkDAsA_3ieOk7_2U84cXv2YrQGpkk"
+        },
+        {
+          "current_key": "AIzaSyA_jzlBCP2vIPJRzOzwCtUn_FhJOYc7XxY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
