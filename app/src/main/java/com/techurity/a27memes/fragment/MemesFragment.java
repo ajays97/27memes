@@ -55,8 +55,7 @@ public class MemesFragment extends Fragment {
         interstitialAd = new InterstitialAd(getContext());
         interstitialAd.setAdUnitId("ca-app-pub-2819514375619003/5816647177");
         Log.d("Ad Loading", "Loaded");
-        AdRequest request = new AdRequest.Builder()
-                .addTestDevice("F46B367C9316B954ABD72A81A27387F0").build();
+        AdRequest request = new AdRequest.Builder().build();
         interstitialAd.loadAd(request);
 
     }

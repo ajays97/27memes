@@ -30,7 +30,7 @@ public class AboutUsActivity extends AppCompatActivity implements RewardedVideoA
         mAd = MobileAds.getRewardedVideoAdInstance(this);
         mAd.setRewardedVideoAdListener(this);
 
-        mAd.loadAd("ca-app-pub-3940256099942544/5224354917", new AdRequest.Builder().build());
+        mAd.loadAd("ca-app-pub-2819514375619003/2128150773", new AdRequest.Builder().build());
 
         watchAd.setOnClickListener(new View.OnClickListener() {
             @Override
