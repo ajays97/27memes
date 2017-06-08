@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -55,16 +56,23 @@
         android:layout_marginLeft="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Support Us - Watch this video"/>
+        android:text="Support Us - Watch a video"/>
 
     <Button
         android:id="@+id/supportBtn"
-        style="@android:style/TextAppearance.DeviceDefault.Medium"
+        style="@android:style/TextAppearance.DeviceDefault.Large"
         android:textStyle="bold"
         android:layout_margin="5dp"
         android:text="Loading... Please Wait"
         android:textColor="@color/colorPrimary"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="75dp" />
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/supportAd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        ads:adSize="SMART_BANNER"
+        ads:adUnitId="@string/aboutAd"/>
 
 </LinearLayout>
