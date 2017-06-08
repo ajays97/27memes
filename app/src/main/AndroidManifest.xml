@@ -73,7 +73,10 @@
         <activity
             android:name=".CategoriesMain"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".CategoryMemes"></activity>
+        <activity android:name=".CategoryMemes" />
+        <activity
+            android:label="About Us"
+            android:name=".AboutUsActivity"></activity>
     </application>
 
 </manifest>

@@ -435,7 +435,7 @@ public class MainActivity extends AppCompatActivity
                 intent.putExtra(Intent.EXTRA_TEXT, "I have attached my meme to go on 27Memes.\nName:\nMessage:\nTags:");
                 startActivity(intent);
             } catch (ActivityNotFoundException e) {
-                Toast.makeText(getApplicationContext(), "Could not find GMail app installed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "No Compatible App", Toast.LENGTH_SHORT).show();
             }
 
         } else if (id == R.id.nav_likeus) {
@@ -447,6 +447,8 @@ public class MainActivity extends AppCompatActivity
                 Intent fb = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/27memes"));
                 startActivity(fb);
             }
+        }else if (id == R.id.nav_about){
+            startActivity(new Intent(MainActivity.this, AboutUsActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

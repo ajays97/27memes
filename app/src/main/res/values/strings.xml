@@ -21,8 +21,17 @@
     <string name="timeline_native_id">ca-app-pub-2819514375619003/1971653973</string>
     <string name="category_ad">ca-app-pub-2819514375619003/7271530776</string>
     <string name="category_interAd">ca-app-pub-2819514375619003/5816647177</string>
+    <string name="support_usAd">ca-app-pub-2819514375619003/2128150773</string>
 
     <string name="title_activity_categories_main">Categories</string>
     <string name="section_format">Hello World from section: %1$d</string>
+
+    <string name="about">27Memes is a fun community for people to share their memes and trolls
+    and explore other gags that each of you can relate to. Whether you are an engineer, a student,
+    a young boy, a girl, a parent or whatever, you can find memes that you can relate to yourself and
+    you can also get your memes on 27Memes so that others can relate to it.</string>
+
+    <string name="contact">Need help? Have an idea or bug report? Want to tell us what you enjoy about 27Memes?
+    Email us at the27memes@gmail.com or follow us on Twitter: @the27memes.</string>
 
 </resources>
