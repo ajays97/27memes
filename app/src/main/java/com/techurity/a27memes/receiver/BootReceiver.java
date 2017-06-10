@@ -39,7 +39,7 @@ public class BootReceiver extends BroadcastReceiver {
                 calendar.setTimeInMillis(System.currentTimeMillis());
                 calendar.add(Calendar.SECOND, 60);
                 AlarmManager manager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-                long interval = 60 * 1000;
+                long interval = 60 * 1000 * 30;
 
                 manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                         interval, pendingIntent);

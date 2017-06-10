@@ -247,7 +247,7 @@ public class MainActivity extends AppCompatActivity
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.add(Calendar.SECOND, 60);
-        long interval = 60 * 1000 ;
+        long interval = 60 * 1000 * 30;
 
         Log.d("Setting Alarm Main", "" + System.nanoTime());
         manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
