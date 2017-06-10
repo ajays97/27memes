@@ -1,6 +1,5 @@
 package com.techurity.a27memes;
 
-import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
@@ -219,13 +218,12 @@ public class MainActivity extends AppCompatActivity
         mAdView.loadAd(adRequest);
 
         /* Retrieve a PendingIntent that will perform a broadcast */
-        Intent alarmIntent = new Intent(MainActivity.this, NotificationReceiver.class);
-        pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, alarmIntent, 0);
 
-        AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        int interval = 8000;
 
-        manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
+//        AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//        int interval = 8000;
+//
+//        manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
 
         //To cancel the alarm
 //        AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -235,8 +233,17 @@ public class MainActivity extends AppCompatActivity
         startAlarm();
     }
 
+    public void startAlarm(){
 
+        Intent alarmIntent = new Intent(MainActivity.this, NotificationReceiver.class);
+        pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, alarmIntent, 0);
+        AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        long interval = 1000 * 60 ;
 
+        Log.d("Setting Alarm Main", ""+System.nanoTime());
+        manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime(),
+                interval, pendingIntent);
+    }
 
     public void updateFeed(String page, boolean check) {
 
@@ -485,12 +492,5 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void startAlarm(){
-        AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        long interval = 1000 * 60 ;
-
-        manager.setRepeating(AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime(),
-                interval, pendingIntent);
-    }
 
 }
