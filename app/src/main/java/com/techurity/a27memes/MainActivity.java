@@ -1,8 +1,14 @@
 package com.techurity.a27memes;
 
+import android.annotation.TargetApi;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,6 +16,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.support.v4.widget.SwipeRefreshLayout;
 
 import android.support.v7.app.AppCompatDelegate;
@@ -53,6 +60,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.techurity.a27memes.adapter.TimelineAdapter;
 import com.techurity.a27memes.app.AppController;
 import com.techurity.a27memes.model.Post;
+import com.techurity.a27memes.receiver.NotificationReceiver;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -65,17 +73,22 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+
 //Page ID = 1713086835593817
 //Runtime ID = 133352060545254
 //App Page = 414941838890340
+//Notification Page ID = 429615974063759
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final int JOB_ID = 1;
     String mainUrl = "https:graph.facebook.com/v2.9/1713086835593817/feed?fields=full_picture,from,created_time,message&limit=5&access_token=" + AccessToken.getCurrentAccessToken().getToken();
 
     JsonObjectRequest objectRequest2 = null;
     private AdView mAdView;
+
+    private PendingIntent pendingIntent;
 
     boolean doubleBackToExitPressedOnce = false;
 
@@ -113,8 +126,6 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         MobileAds.initialize(this, "ca-app-pub-2819514375619003~1342858770");
-
-        System.out.println("Registration.onTokenRefresh TOKEN: " + FirebaseInstanceId.getInstance().getToken());
 
         feedList = (ListView) findViewById(R.id.feedList);
         feedAdapter = new TimelineAdapter(this, postList);
@@ -207,7 +218,25 @@ public class MainActivity extends AppCompatActivity
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
 
+        /* Retrieve a PendingIntent that will perform a broadcast */
+        Intent alarmIntent = new Intent(MainActivity.this, NotificationReceiver.class);
+        pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, alarmIntent, 0);
+
+        AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        int interval = 8000;
+
+        manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), interval, pendingIntent);
+
+        //To cancel the alarm
+//        AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//        manager.cancel(pendingIntent);
+//        Toast.makeText(this, "Alarm Canceled", Toast.LENGTH_SHORT).show();
+
+        startAlarm();
     }
+
+
+
 
     public void updateFeed(String page, boolean check) {
 
@@ -447,13 +476,21 @@ public class MainActivity extends AppCompatActivity
                 Intent fb = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/27memes"));
                 startActivity(fb);
             }
-        }else if (id == R.id.nav_about){
+        } else if (id == R.id.nav_about) {
             startActivity(new Intent(MainActivity.this, AboutUsActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void startAlarm(){
+        AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        long interval = 1000 * 60 ;
+
+        manager.setRepeating(AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime(),
+                interval, pendingIntent);
     }
 
 }
