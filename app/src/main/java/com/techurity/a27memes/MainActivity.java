@@ -230,18 +230,27 @@ public class MainActivity extends AppCompatActivity
 //        manager.cancel(pendingIntent);
 //        Toast.makeText(this, "Alarm Canceled", Toast.LENGTH_SHORT).show();
 
-        startAlarm();
+        boolean alarmUp = (PendingIntent.getBroadcast(this, 0,
+                new Intent(MainActivity.this, NotificationReceiver.class),
+                PendingIntent.FLAG_NO_CREATE) != null);
+
+        if (!alarmUp)
+            startAlarm();
     }
 
-    public void startAlarm(){
+    public void startAlarm() {
 
         Intent alarmIntent = new Intent(MainActivity.this, NotificationReceiver.class);
         pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, alarmIntent, 0);
         AlarmManager manager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        long interval = 1000 * 60 ;
 
-        Log.d("Setting Alarm Main", ""+System.nanoTime());
-        manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime(),
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.add(Calendar.SECOND, 60);
+        long interval = 60 * 1000 ;
+
+        Log.d("Setting Alarm Main", "" + System.nanoTime());
+        manager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                 interval, pendingIntent);
     }
 

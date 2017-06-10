@@ -80,16 +80,12 @@
             android:name=".AboutUsActivity"
             android:label="About Us" />
 
-        <receiver android:name=".receiver.NotificationReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
+        <receiver android:name=".receiver.NotificationReceiver" />
 
         <!-- Will not be called unless the application explicitly enables it -->
         <receiver
             android:name=".receiver.BootReceiver"
-            android:enabled="false">
+            android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
