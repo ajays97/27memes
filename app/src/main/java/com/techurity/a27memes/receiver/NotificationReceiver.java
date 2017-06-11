@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
@@ -18,6 +19,7 @@ import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
+import com.techurity.a27memes.LoginActivity;
 import com.techurity.a27memes.MainActivity;
 import com.techurity.a27memes.R;
 
@@ -49,7 +51,7 @@ public class NotificationReceiver extends BroadcastReceiver {
                     JSONArray jsonArray = mainObj.getJSONArray("data");
                     JSONObject postObj = jsonArray.getJSONObject(0);
                     main_message = postObj.getString("message");
-                    if (!main_message.equals("stop")){
+                    if (!main_message.equals("stop")) {
                         makeNotification(mContext, main_message);
                     }
                 } catch (Exception e) {
@@ -66,13 +68,26 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     private void makeNotification(Context context, String main_message) {
 
+        Intent resultIntent;
+
+        if (main_message.equals("New Update Available!")) {
+            try {
+                resultIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.techurity.a27memes"));
+            } catch (android.content.ActivityNotFoundException e) {
+                resultIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.techurity.a27memes"));
+            } finally {
+
+            }
+        } else
+            resultIntent = new Intent(context, LoginActivity.class);
+
         builder = new NotificationCompat.Builder(context)
                 .setSmallIcon(R.drawable.ic_menu_likeus)
                 .setContentTitle("27Memes")
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setContentText(main_message);
 
-        Intent resultIntent = new Intent(context, MainActivity.class);
+
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent resultPendingIntent =

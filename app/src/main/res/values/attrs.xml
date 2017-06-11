@@ -9,4 +9,6 @@
         <attr name="metaButtonBarButtonStyle" format="reference" />
     </declare-styleable>
 
+    <attr name="colorDivider" format="reference" />
+
 </resources>

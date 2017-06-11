@@ -111,7 +111,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onError(FacebookException exception) {
                 // App code
                 exception.printStackTrace();
-                Toast.makeText(getApplicationContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Error Occurred. Logout from Facebook and try again.", Toast.LENGTH_SHORT).show();
             }
 
         });
