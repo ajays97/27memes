@@ -16,6 +16,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.v4.widget.ExploreByTouchHelper;
 import android.support.v4.widget.SwipeRefreshLayout;
 
 import android.support.v7.app.AppCompatDelegate;
@@ -31,6 +32,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 
 import android.widget.Button;
@@ -122,6 +125,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         MobileAds.initialize(this, "ca-app-pub-2819514375619003~1342858770");
@@ -133,7 +137,6 @@ public class MainActivity extends AppCompatActivity
 
         feedList.setAdapter(feedAdapter);
         feedList.addHeaderView(header);
-
 
         pDialog = new ProgressDialog(this);
         pDialog.setMessage("Loading...");
@@ -456,20 +459,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             finish();
         } else if (id == R.id.nav_explore) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Explore Coming Soon...");
-            builder.setCancelable(true);
-
-            builder.setPositiveButton("I'm Waiting", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    dialogInterface.cancel();
-                }
-            });
-
-            AlertDialog alertDialog = builder.create();
-            alertDialog.show();
-
+            startActivity(new Intent(MainActivity.this, ExploreActivity.class));
         } else if (id == R.id.nav_categories) {
             startActivity(new Intent(MainActivity.this, CategoriesMain.class));
         } else if (id == R.id.nav_signup) {

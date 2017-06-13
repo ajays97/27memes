@@ -11,7 +11,7 @@
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
         android:textStyle="bold"
         android:text="Give Me More"
-        android:background="#db4e5f"
+        android:background="@color/colorDivider"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

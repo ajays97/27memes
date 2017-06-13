@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#54566f</color>
+    <color name="colorPrimaryPurple">#54566f</color>
+    <color name="colorPrimary">#a5317bb4</color>
+    <color name="colorPrimaryDark">#2b6196</color>
     <color name="colorPrimaryInverse">#d6cdcd</color>
-    <color name="colorPrimaryDark">#3b3c53</color>
+    <color name="colorPrimaryPurpleDark">#3b3c53</color>
     <color name="colorPrimaryDarkInverse">#000000</color>
     <color name="colorAccent">#db4e5f</color>
     <color name="colorAccentInverse">#54566f</color>
@@ -11,6 +13,8 @@
     <color name="colorDivider">#f99a66</color>
     <color name="colorDividerInverse">#000000</color>
 
+    <color name="footer_button_color">#db4e5f</color>
     <color name="black_overlay">#66000000</color>
+    <color name="yellow_sample">#9b0005</color>
 
 </resources>

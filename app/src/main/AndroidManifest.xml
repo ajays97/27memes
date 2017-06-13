@@ -91,6 +91,8 @@
             </intent-filter>
         </receiver>
 
+        <activity android:name=".ExploreActivity" />
+        <activity android:name=".PageActivity"></activity>
     </application>
 
 </manifest>

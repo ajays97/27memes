@@ -10,5 +10,6 @@
     </declare-styleable>
 
     <attr name="colorDivider" format="reference" />
+    <attr name="textColor" format="color" />
 
 </resources>

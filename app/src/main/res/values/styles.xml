@@ -1,12 +1,13 @@
 <resources>
 
     <!-- Dark application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorDivider">@color/colorDivider</item>
+        <item name="textColor">@color/textPrimary</item>
 
     </style>
 
