@@ -459,7 +459,23 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             finish();
         } else if (id == R.id.nav_explore) {
-            startActivity(new Intent(MainActivity.this, ExploreActivity.class));
+//            startActivity(new Intent(MainActivity.this, ExploreActivity.class));
+
+            AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+            builder1.setMessage("Explore Coming Soon...");
+            builder1.setCancelable(true);
+
+            builder1.setPositiveButton(
+                    "I'm Waiting",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+
+            AlertDialog alert11 = builder1.create();
+            alert11.show();
+
         } else if (id == R.id.nav_categories) {
             startActivity(new Intent(MainActivity.this, CategoriesMain.class));
         } else if (id == R.id.nav_signup) {
