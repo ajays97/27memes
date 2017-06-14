@@ -7,8 +7,8 @@ android {
         applicationId "com.techurity.a27memes"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 12
-        versionName "2.1"
+        versionCode 13
+        versionName "2.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -43,12 +43,5 @@ dependencies {
     compile 'me.tatarka.support:jobscheduler:0.1.1'
     testCompile 'junit:junit:4.12'
 }
-
-
-
-
-
-
-
 
 apply plugin: 'com.google.gms.google-services'

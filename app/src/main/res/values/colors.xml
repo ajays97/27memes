@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimaryPurple">#54566f</color>
-    <color name="colorPrimary">#a5317bb4</color>
+    <color name="colorPrimary">#317bb4</color>
+    <color name="colorPrimaryLight">#a5317bb4</color>
     <color name="colorPrimaryDark">#2b6196</color>
     <color name="colorPrimaryInverse">#d6cdcd</color>
     <color name="colorPrimaryPurpleDark">#3b3c53</color>
