@@ -92,7 +92,7 @@
         </receiver>
 
         <activity android:name=".ExploreActivity" />
-        <activity android:name=".PageActivity"></activity>
+        <activity android:name=".PageActivity" />
     </application>
 
 </manifest>

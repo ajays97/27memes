@@ -109,13 +109,12 @@ public class MainActivity extends AppCompatActivity
     boolean doubleBackToExitPressedOnce = false;
 
     String image_url;
+    File input_file;
 
     View footer, header;
     Button loadMore;
 
     GraphRequest request;
-
-    File input_file;
 
     Calendar cal;
     String tags;
@@ -160,32 +159,6 @@ public class MainActivity extends AppCompatActivity
         pDialog.setMessage("Loading...");
         pDialog.show();
 
-        Bundle b = new Bundle();
-        b.putString("limit", "1");
-        b.putString("fields", "message");
-        request = new GraphRequest(AccessToken.getCurrentAccessToken(), "/133352060545254/posts", b, HttpMethod.GET, new GraphRequest.Callback() {
-            @Override
-            public void onCompleted(GraphResponse response) {
-                try {
-                    JSONObject mainObj = response.getJSONObject();
-                    JSONArray data = mainObj.getJSONArray("data");
-                    String page = data.getJSONObject(0).getString("message");
-                    mainUrl = "https:graph.facebook.com/v2.9/" + page + "/feed?fields=full_picture,from,created_time,message&limit=5&access_token=" + AccessToken.getCurrentAccessToken().getToken();
-                    if (page.equals("414941838890340")) {
-                        updateFeed(page, true);
-                        //updateFeed(mainUrl, true);
-                    } else
-                        updateFeed(page, false);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (NullPointerException e) {
-                    Toast.makeText(getApplicationContext(), "Could not connect", Toast.LENGTH_SHORT).show();
-                    pDialog.hide();
-                }
-            }
-        });
-        request.executeAsync();
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -216,6 +189,8 @@ public class MainActivity extends AppCompatActivity
                 refreshLayout.setRefreshing(false);
             }
         };
+
+        updateFeed("414941838890340", true);
 
         feedList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -522,9 +497,9 @@ public class MainActivity extends AppCompatActivity
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             finish();
         } else if (id == R.id.nav_explore) {
-//            startActivity(new Intent(MainActivity.this, ExploreActivity.class));
+            startActivity(new Intent(MainActivity.this, ExploreActivity.class));
 
-            AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
+       /*     AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
             builder1.setMessage("Explore Coming Soon...");
             builder1.setCancelable(true);
 
@@ -537,7 +512,7 @@ public class MainActivity extends AppCompatActivity
                     });
 
             AlertDialog alert11 = builder1.create();
-            alert11.show();
+            alert11.show();*/
 
         } else if (id == R.id.nav_categories) {
             startActivity(new Intent(MainActivity.this, CategoriesMain.class));

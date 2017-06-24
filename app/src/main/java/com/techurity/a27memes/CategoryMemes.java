@@ -3,11 +3,19 @@ package com.techurity.a27memes;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -29,6 +37,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -55,6 +72,9 @@ public class CategoryMemes extends AppCompatActivity {
     String next = null;
     String main_message;
     boolean page_check;
+
+    String image_url;
+    File input_file;
 
     GraphRequest request;
 
@@ -137,12 +157,57 @@ public class CategoryMemes extends AppCompatActivity {
             }
         });
 
+
+
         mAdView = (AdView) findViewById(R.id.catAdView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
 
         updateFeed(page_id, true);
+        registerForContextMenu(feedList);
 
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        if (v.getId() == R.id.catFeedList) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.main_long_menu, menu);
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        Post post = (Post) feedList.getItemAtPosition(info.position);
+        image_url = post.getImage_url();
+
+        switch (item.getItemId()) {
+            case R.id.mSave:
+                if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED &&
+                        ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
+
+                    if (!ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) &&
+                            ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                        new ImageDownloader().execute(image_url);
+                    } else {
+                        ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE}, 200);
+                    }
+
+                } else {
+                    new ImageDownloader().execute(image_url);
+                }
+                return true;
+
+            case R.id.mLongShare:
+                new ShareCreator().execute(image_url);
+                return true;
+
+            default:
+                return super.onContextItemSelected(item);
+        }
     }
 
     public void updateFeed(String page, boolean check) {
@@ -171,8 +236,8 @@ public class CategoryMemes extends AppCompatActivity {
                         JSONObject postObj = jsonArray.getJSONObject(i);
                         main_message = postObj.getString("message");
                         String creator = main_message.substring(0, main_message.indexOf("Mes"));
-                        String message = main_message.substring(main_message.indexOf("Message:")+8, main_message.indexOf("Tags:"));
-                        String tags = main_message.substring(main_message.indexOf("Tags:")+5, main_message.length());
+                        String message = main_message.substring(main_message.indexOf("Message:") + 8, main_message.indexOf("Tags:"));
+                        String tags = main_message.substring(main_message.indexOf("Tags:") + 5, main_message.length());
                         String image_url = postObj.getString("full_picture");
                         String post_id = postObj.getString("id");
                         String created_at = postObj.getString("created_time");
@@ -190,10 +255,9 @@ public class CategoryMemes extends AppCompatActivity {
                     e.printStackTrace();
                 } catch (ParseException e) {
                     e.printStackTrace();
-                } catch(NullPointerException e){
+                } catch (NullPointerException e) {
                     Toast.makeText(getApplicationContext(), "Could not connect", Toast.LENGTH_SHORT).show();
-                }
-                finally {
+                } finally {
                     feedAdapter.notifyDataSetChanged();
                     hidePDialog();
                 }
@@ -203,6 +267,14 @@ public class CategoryMemes extends AppCompatActivity {
         request.executeAsync();
 
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.category_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
 
     public void loadMoreMemes(boolean check) {
 
@@ -226,8 +298,8 @@ public class CategoryMemes extends AppCompatActivity {
                                 JSONObject postObj = jsonArray.getJSONObject(i);
                                 main_message = postObj.getString("message");
                                 String creator = main_message.substring(0, main_message.indexOf("Mes"));
-                                String message = main_message.substring(main_message.indexOf("Message:")+8, main_message.indexOf("Tags:"));
-                                String tags = main_message.substring(main_message.indexOf("Tags:")+5, main_message.length());
+                                String message = main_message.substring(main_message.indexOf("Message:") + 8, main_message.indexOf("Tags:"));
+                                String tags = main_message.substring(main_message.indexOf("Tags:") + 5, main_message.length());
                                 String image_url = postObj.getString("full_picture");
                                 String post_id = postObj.getString("id");
                                 String created_at = postObj.getString("created_time");
@@ -246,10 +318,9 @@ public class CategoryMemes extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "No More Memes", Toast.LENGTH_SHORT).show();
                         } catch (ParseException e) {
                             e.printStackTrace();
-                        } catch(NullPointerException e){
+                        } catch (NullPointerException e) {
                             Toast.makeText(getApplicationContext(), "Connection Lost", Toast.LENGTH_SHORT).show();
-                        }
-                        finally {
+                        } finally {
                             feedAdapter.notifyDataSetChanged();
 
                         }
@@ -270,6 +341,12 @@ public class CategoryMemes extends AppCompatActivity {
 
         if (id == android.R.id.home) {
             onBackPressed();
+        }else if (id == R.id.cRefresh){
+            postList.clear();
+            lastResponse = null;
+            next = null;
+            feedList.removeFooterView(footer);
+            updateFeed(page_id, true);
         }
 
         return super.onOptionsItemSelected(item);
@@ -286,5 +363,150 @@ public class CategoryMemes extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         hidePDialog();
+    }
+
+    public class ImageDownloader extends AsyncTask<String, Integer, String> {
+
+        ProgressDialog pd;
+        InputStream is;
+        OutputStream os;
+
+        @Override
+        protected void onPreExecute() {
+
+            pd = new ProgressDialog(CategoryMemes.this);
+            pd.setTitle("Downloading Meme...");
+            pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            pd.setMax(100);
+            pd.setProgress(0);
+            pd.show();
+
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            pd.dismiss();
+            Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            pd.setProgress(values[0]);
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            String path = params[0];
+
+            String file_name = path.substring(path.lastIndexOf('/') + 1, path.lastIndexOf(".jpg"));
+
+            int file_length = 0;
+            try {
+                URL url = new URL(path);
+                URLConnection connection = url.openConnection();
+                connection.connect();
+                file_length = connection.getContentLength();
+                File app_folder = new File("sdcard/DCIM/27Memes");
+
+                if (!app_folder.exists())
+                    app_folder.mkdir();
+
+                input_file = new File(app_folder, file_name + ".jpg");
+
+                if (!input_file.exists()) {
+                    is = new BufferedInputStream(url.openStream(), 8192);
+                    byte[] data = new byte[1024];
+                    int total = 0;
+                    int count = 0;
+                    os = new FileOutputStream(input_file);
+                    while ((count = is.read(data)) != -1) {
+                        total += count;
+                        os.write(data, 0, count);
+                        int progress = (int) total * 100 / file_length;
+                        publishProgress(progress);
+                    }
+                } else {
+                    return "MEME Already Exists";
+                }
+
+                is.close();
+                os.close();
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return "MEME Saved";
+
+        }
+    }
+
+    public class ShareCreator extends AsyncTask<String, Integer, String> {
+
+        ProgressDialog pd;
+        InputStream is;
+        OutputStream os;
+
+        @Override
+        protected void onPostExecute(String s) {
+            String file_name = image_url.substring(image_url.lastIndexOf('/') + 1, image_url.lastIndexOf(".jpg") + 4);
+            Uri picUri = Uri.parse("sdcard/DCIM/27Memes/" + file_name);
+            Intent sendIntent = new Intent(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_STREAM, picUri);
+            sendIntent.setType("image/jpg");
+            startActivity(Intent.createChooser(sendIntent, "Share MEME Via"));
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            String path = params[0];
+
+            String file_name = path.substring(path.lastIndexOf('/') + 1, path.lastIndexOf(".jpg"));
+
+            int file_length = 0;
+            try {
+                URL url = new URL(path);
+                URLConnection connection = url.openConnection();
+                connection.connect();
+                file_length = connection.getContentLength();
+                File app_folder = new File("sdcard/DCIM/27Memes");
+
+                if (!app_folder.exists())
+                    app_folder.mkdir();
+
+                input_file = new File(app_folder, file_name + ".jpg");
+
+                if (!input_file.exists()) {
+                    is = new BufferedInputStream(url.openStream(), 8192);
+                    byte[] data = new byte[1024];
+                    int total = 0;
+                    int count = 0;
+                    os = new FileOutputStream(input_file);
+                    while ((count = is.read(data)) != -1) {
+                        total += count;
+                        os.write(data, 0, count);
+                        int progress = (int) total * 100 / file_length;
+                        publishProgress(progress);
+                    }
+                } else {
+                    return null;
+                }
+
+                is.close();
+                os.close();
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+
+        }
     }
 }
