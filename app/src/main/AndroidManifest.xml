@@ -93,6 +93,7 @@
 
         <activity android:name=".ExploreActivity" />
         <activity android:name=".PageActivity" />
+        <activity android:name=".TagActivity"></activity>
     </application>
 
 </manifest>

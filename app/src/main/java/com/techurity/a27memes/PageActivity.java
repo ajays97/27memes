@@ -3,6 +3,7 @@ package com.techurity.a27memes;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.nfc.Tag;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -108,9 +109,11 @@ public class PageActivity extends AppCompatActivity {
                 try {
                     Post post = (Post) adapterView.getItemAtPosition(position);
                     String url = post.getImage_url();
+                    String post_id = post.getPost_id();
 
-                    Intent intent = new Intent(PageActivity.this, ViewImageActivity.class);
-                    intent.putExtra(Intent.EXTRA_TEXT, url);
+                    Intent intent = new Intent(PageActivity.this, TagActivity.class);
+                    intent.putExtra(Intent.EXTRA_TEXT, post_id);
+                    intent.putExtra("IMAGE_URL", url);
                     startActivity(intent);
                 } catch (NullPointerException e) {
 
@@ -134,7 +137,6 @@ public class PageActivity extends AppCompatActivity {
         feedList.addFooterView(footer);
         cal = Calendar.getInstance();
 
-
         Bundle parameters = new Bundle();
         parameters.putString("limit", "5");
         parameters.putString("fields", "full_picture,message,created_time");
@@ -144,7 +146,6 @@ public class PageActivity extends AppCompatActivity {
             public void onCompleted(GraphResponse response) {
                 lastResponse = response;
                 JSONObject mainObj = response.getJSONObject();
-                Log.d("PageActivity", response.toString());
                 try {
                     JSONArray jsonArray = mainObj.getJSONArray("data");
                     for (int i = 0; i < 5; i++) {
@@ -152,6 +153,8 @@ public class PageActivity extends AppCompatActivity {
 
                         if (postObj.has("message"))
                             main_message = postObj.getString("message");
+                        else
+                            main_message = "Presented By 27Memes";
 
                         if (postObj.has("full_picture"))
                             post_image_url = postObj.getString("full_picture");
