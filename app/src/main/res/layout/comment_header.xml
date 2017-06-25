@@ -5,6 +5,7 @@
     android:orientation="vertical">
 
     <com.android.volley.toolbox.NetworkImageView
+        android:background="@drawable/loading"
         android:id="@+id/com_image"
         android:layout_width="match_parent"
         android:layout_height="300dp"
@@ -12,5 +13,15 @@
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp" />
+
+    <TextView
+        android:textStyle="bold"
+        android:background="@color/colorPrimaryLight"
+        android:textColor="@android:color/white"
+        style="@android:style/TextAppearance.DeviceDefault.Large"
+        android:textAlignment="center"
+        android:text="Comments"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

@@ -51,11 +51,14 @@ public class TagActivity extends AppCompatActivity {
         if (imageLoader == null)
             imageLoader = AppController.getInstance().getImageLoader();
 
+        Log.d("Image URL", image_url);
         main_image.setImageUrl(image_url, imageLoader);
 
         commentList = (ListView) findViewById(R.id.commentslist);
         commentAdapter = new CommentAdapter(this, commentsList);
         commentList.setAdapter(commentAdapter);
+
+        commentList.addHeaderView(commentHeader);
 
         updateComments(post_id);
 

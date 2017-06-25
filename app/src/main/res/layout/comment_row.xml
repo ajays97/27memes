@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:fontFamily="sans-serif-condensed"
-            android:minHeight="100dp"
+            android:minHeight="50dp"
             android:text="Example application"
             android:textColor="@color/colorPrimary"
             android:typeface="serif" />
