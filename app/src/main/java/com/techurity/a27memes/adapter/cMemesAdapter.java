@@ -28,6 +28,7 @@ public class cMemesAdapter extends ArrayAdapter {
     LayoutInflater inflater;
     TextView catTitle;
     ImageView catImage;
+/*
 
     public Integer[] categories = {
             R.mipmap.cat_programmer,
@@ -38,6 +39,18 @@ public class cMemesAdapter extends ArrayAdapter {
             R.mipmap.cat_adult,
             R.mipmap.cat_kids,
             R.mipmap.cat_suggest
+    };
+*/
+
+    public Integer[] categories = {
+            R.drawable.loading,
+            R.drawable.loading,
+            R.drawable.loading,
+            R.drawable.loading,
+            R.drawable.loading,
+            R.drawable.loading,
+            R.drawable.loading,
+            R.drawable.loading
     };
 
     public String[] categs = {
