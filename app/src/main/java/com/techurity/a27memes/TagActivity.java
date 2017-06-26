@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -17,6 +18,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
 import com.techurity.a27memes.adapter.CommentAdapter;
 import com.techurity.a27memes.app.AppController;
 import com.techurity.a27memes.model.Comment;
@@ -47,6 +49,7 @@ public class TagActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tag);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
         post_id = intent.getStringExtra(Intent.EXTRA_TEXT);
@@ -86,40 +89,39 @@ public class TagActivity extends AppCompatActivity {
 
     public void updateComments(String post_id) {
 
+        Bundle params = new Bundle();
+        params.putString("limit", "10");
+        params.putString("order", "reverse_chronological");
 
-        GraphRequest request = GraphRequest.newGraphPathRequest(
+        GraphRequest request = new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
-                "/" + post_id + "/comments",
+                "/" + post_id + "/comments", params, HttpMethod.GET,
                 new GraphRequest.Callback() {
                     @Override
                     public void onCompleted(GraphResponse response) {
                         lastResponse = response;
+
                         JSONArray mainArray = null;
-                        JSONArray commentArray = null;
+
                         try {
                             JSONObject mainObj = response.getJSONObject();
-                            mainArray = mainObj.getJSONArray("data");
-                            JSONObject commentObj = mainArray.getJSONObject(1).getJSONObject("comments");
-                            commentArray = commentObj.getJSONArray("data");
 
-                            JSONObject comment;
-                            for (int i = 0; i < 5; i++) {
-                                comment = commentArray.getJSONObject(i);
-                                JSONObject fromObj = comment.getJSONObject("from");
-                                commentsList.add(new Comment(fromObj.getString("name"), comment.getString("message")));
-                                Log.d("Output", comment.toString());
+                            mainArray = mainObj.getJSONArray("data");
+
+
+                            for (int i = 0; i < 10; i++) {
+                                JSONObject commentObj = mainArray.getJSONObject(i);
+                                JSONObject fromObj = commentObj.getJSONObject("from");
+                                commentsList.add(new Comment(fromObj.getString("name"), commentObj.getString("message")));
                             }
 
                         } catch (JSONException e) {
-                            e.printStackTrace();
+                            Toast.makeText(getApplicationContext(), "Error fetching comments", Toast.LENGTH_SHORT).show();
+                        } finally {
+                            commentAdapter.notifyDataSetChanged();
                         }
-                        commentAdapter.notifyDataSetChanged();
                     }
                 });
-
-        Bundle parameters = new Bundle();
-        parameters.putString("fields", "comments.limit(5){from,message}");
-        request.setParameters(parameters);
         request.executeAsync();
 
         commentList.addFooterView(commentFooter);
@@ -140,30 +142,24 @@ public class TagActivity extends AppCompatActivity {
                     @Override
                     public void onCompleted(GraphResponse response) {
                         lastResponse = response;
-
                         JSONArray mainArray = null;
-                        JSONArray commentArray = null;
+
                         try {
-
                             JSONObject mainObj = response.getJSONObject();
-                            mainArray = mainObj.getJSONArray("data");
-                            Log.d("PAGINATION", mainArray.toString());
-                            JSONObject commentObj = mainArray.getJSONObject(3).getJSONObject("comments");
-                            commentArray = commentObj.getJSONArray("data");
 
-                            JSONObject comment;
-                            for (int i = 0; i < 5; i++) {
-                                comment = commentArray.getJSONObject(i);
-                                JSONObject fromObj = comment.getJSONObject("from");
-                                commentsList.add(new Comment(fromObj.getString("name"), comment.getString("message")));
-                                Log.d("Output", comment.toString());
+                            mainArray = mainObj.getJSONArray("data");
+
+                            for (int i = 0; i < 10; i++) {
+                                JSONObject commentObj = mainArray.getJSONObject(i);
+                                JSONObject fromObj = commentObj.getJSONObject("from");
+                                commentsList.add(new Comment(fromObj.getString("name"), commentObj.getString("message")));
                             }
 
                         } catch (JSONException e) {
-                            e.printStackTrace();
-                            Toast.makeText(getApplicationContext(), "Error loading comments", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), "Error fetching comments", Toast.LENGTH_SHORT).show();
+                        } finally {
+                            commentAdapter.notifyDataSetChanged();
                         }
-                        commentAdapter.notifyDataSetChanged();
                     }
                 });
                 newRequest.executeAsync();
@@ -174,6 +170,18 @@ public class TagActivity extends AppCompatActivity {
             pDialog.dismiss();
             pDialog = null;
         }
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            finish();
+        }
+
+        return super.onOptionsItemSelected(item);
 
     }
 

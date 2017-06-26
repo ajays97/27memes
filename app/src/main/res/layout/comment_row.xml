@@ -14,10 +14,11 @@
 
         <TextView
             android:id="@+id/comCreator"
-            style="@android:style/TextAppearance.DeviceDefault.Large"
+            style="@android:style/TextAppearance.DeviceDefault.Medium"
             android:layout_width="fill_parent"
             android:layout_height="26dip"
             android:ellipsize="marquee"
+            android:layout_marginLeft="5dp"
             android:singleLine="true"
             android:text="Created By"
             android:textColor="@color/colorPrimary"
@@ -26,12 +27,12 @@
 
         <TextView
             android:id="@+id/comDescription"
-            style="@android:style/TextAppearance.DeviceDefault.Medium"
+            style="@android:style/TextAppearance.DeviceDefault.Small"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="15dp"
             android:fontFamily="sans-serif-condensed"
-            android:minHeight="50dp"
+            android:minHeight="30dp"
             android:text="Example application"
             android:textColor="@color/colorPrimary"
             android:typeface="serif" />

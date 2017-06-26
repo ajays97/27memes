@@ -65,7 +65,7 @@ public class CommentAdapter extends ArrayAdapter<Comment> {
         message = (TextView) convertView.findViewById(R.id.comDescription);
 
         Comment comment = comments.get(position);
-        creator.setText("->" + comment.getCreator());
+        creator.setText(comment.getCreator());
         message.setText(comment.getMessage());
 
         return convertView;
