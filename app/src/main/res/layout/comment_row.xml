@@ -26,6 +26,7 @@
             android:typeface="monospace" />
 
         <TextView
+            android:textIsSelectable="true"
             android:id="@+id/comDescription"
             style="@android:style/TextAppearance.DeviceDefault.Small"
             android:layout_width="fill_parent"

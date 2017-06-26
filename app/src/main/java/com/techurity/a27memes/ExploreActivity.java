@@ -26,6 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 //List Page ID = 1509884089083570
@@ -121,6 +122,7 @@ public class ExploreActivity extends AppCompatActivity {
 
     public void setListItems(ArrayList<String> page_list) {
 
+//        Collections.shuffle(page_list);
         pageAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, page_list);
         pageList.setAdapter(pageAdapter);
 

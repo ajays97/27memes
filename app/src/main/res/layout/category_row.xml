@@ -10,6 +10,8 @@
         android:orientation="horizontal">
 
         <ImageView
+            android:padding="1dp"
+            android:src="@drawable/nav_dp"
             android:id="@+id/catImage"
             android:layout_width="200dp"
             android:layout_height="200dp" />

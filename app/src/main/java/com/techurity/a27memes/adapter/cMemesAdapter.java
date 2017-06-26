@@ -43,14 +43,14 @@ public class cMemesAdapter extends ArrayAdapter {
 */
 
     public Integer[] categories = {
-            R.drawable.loading,
-            R.drawable.loading,
-            R.drawable.loading,
-            R.drawable.loading,
-            R.drawable.loading,
-            R.drawable.loading,
-            R.drawable.loading,
-            R.drawable.loading
+            R.drawable.nav_dp,
+            R.drawable.nav_dp,
+            R.drawable.nav_dp,
+            R.drawable.nav_dp,
+            R.drawable.nav_dp,
+            R.drawable.nav_dp,
+            R.drawable.nav_dp,
+            R.drawable.nav_dp
     };
 
     public String[] categs = {
@@ -94,7 +94,7 @@ public class cMemesAdapter extends ArrayAdapter {
         catImage = (ImageView) convertView.findViewById(R.id.catImage);
         catTitle = (TextView) convertView.findViewById(R.id.catTitle);
 
-        catImage.setImageResource(categories[position]);
+//        catImage.setImageResource(categories[position]);
         catImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
         catTitle.setText(categs[position]);

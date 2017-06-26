@@ -7,9 +7,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -19,6 +21,7 @@ import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
+import com.facebook.login.LoginManager;
 import com.techurity.a27memes.adapter.CommentAdapter;
 import com.techurity.a27memes.app.AppController;
 import com.techurity.a27memes.model.Comment;
@@ -28,6 +31,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class TagActivity extends AppCompatActivity {
 
@@ -40,8 +44,9 @@ public class TagActivity extends AppCompatActivity {
     ListView commentList;
     GraphResponse lastResponse = null;
 
-    Button loadmore;
+    Button loadmore, commentBtn;
     View commentFooter;
+    EditText commentText;
 
     ProgressDialog pDialog;
 
@@ -54,6 +59,9 @@ public class TagActivity extends AppCompatActivity {
         Intent intent = getIntent();
         post_id = intent.getStringExtra(Intent.EXTRA_TEXT);
         image_url = intent.getStringExtra("IMAGE_URL");
+
+        commentBtn = (Button) findViewById(R.id.sendComment);
+        commentText = (EditText) findViewById(R.id.editText);
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View commentHeader = inflater.inflate(R.layout.comment_header, null);
@@ -92,6 +100,32 @@ public class TagActivity extends AppCompatActivity {
         });
 
         updateComments(post_id);
+
+        commentBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                LoginManager.getInstance().logInWithPublishPermissions(TagActivity.this, Arrays.asList("publish_actions"));
+
+                pDialog = new ProgressDialog(TagActivity.this);
+                pDialog.setMessage("Posting Comment");
+                pDialog.show();
+
+                Bundle parameters = new Bundle();
+                parameters.putString("message", commentText.getText().toString());
+                GraphRequest request = new GraphRequest(AccessToken.getCurrentAccessToken(), "/" + post_id + "/comments", parameters, HttpMethod.POST, new GraphRequest.Callback() {
+                    @Override
+                    public void onCompleted(GraphResponse response) {
+                        Toast.makeText(getApplicationContext(), "Comment Posted", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                request.executeAsync();
+
+                pDialog.dismiss();
+                commentText.setText(null);
+            }
+        });
 
     }
 
@@ -180,15 +214,29 @@ public class TagActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.category_main, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
         if (id == android.R.id.home) {
             finish();
+        } else if (id == R.id.cRefresh) {
+            commentAdapter.clear();
+            lastResponse = null;
+            commentList.removeFooterView(commentFooter);
+            updateComments(post_id);
+
         }
 
         return super.onOptionsItemSelected(item);
 
     }
+
 
 }
