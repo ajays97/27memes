@@ -67,7 +67,6 @@ public class TagActivity extends AppCompatActivity {
 
         loadmore = (Button) commentFooter.findViewById(R.id.load_more_comments);
 
-        Log.d("Image URL", image_url);
         main_image.setImageUrl(image_url, imageLoader);
 
         commentList = (ListView) findViewById(R.id.commentslist);
@@ -80,6 +79,15 @@ public class TagActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 loadMoreComments();
+            }
+        });
+
+        main_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent1 = new Intent(TagActivity.this, ViewImageActivity.class);
+                intent1.putExtra(Intent.EXTRA_TEXT, image_url);
+                startActivity(intent1);
             }
         });
 
@@ -105,9 +113,7 @@ public class TagActivity extends AppCompatActivity {
 
                         try {
                             JSONObject mainObj = response.getJSONObject();
-
                             mainArray = mainObj.getJSONArray("data");
-
 
                             for (int i = 0; i < 10; i++) {
                                 JSONObject commentObj = mainArray.getJSONObject(i);
