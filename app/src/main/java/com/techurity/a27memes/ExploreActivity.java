@@ -3,9 +3,12 @@ package com.techurity.a27memes;
 import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -35,7 +38,7 @@ public class ExploreActivity extends AppCompatActivity {
 
     GraphRequest listRequest;
     ListView pageList;
-    ListAdapter pageAdapter;
+    ArrayAdapter<String> pageAdapter;
 
     ArrayList<String> page_names, page_ids;
 
@@ -109,6 +112,28 @@ public class ExploreActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.explore_menu, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                pageAdapter.getFilter().filter(searchView.getQuery());
+                return false;
+            }
+        });
+
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
@@ -122,7 +147,7 @@ public class ExploreActivity extends AppCompatActivity {
 
     public void setListItems(ArrayList<String> page_list) {
 
-//        Collections.shuffle(page_list);
+        Collections.shuffle(page_list);
         pageAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, page_list);
         pageList.setAdapter(pageAdapter);
 
