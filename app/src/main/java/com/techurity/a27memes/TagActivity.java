@@ -60,8 +60,8 @@ public class TagActivity extends AppCompatActivity {
         post_id = intent.getStringExtra(Intent.EXTRA_TEXT);
         image_url = intent.getStringExtra("IMAGE_URL");
 
-        commentBtn = (Button) findViewById(R.id.sendComment);
-        commentText = (EditText) findViewById(R.id.editText);
+//        commentBtn = (Button) findViewById(R.id.sendComment);
+//        commentText = (EditText) findViewById(R.id.editText);
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View commentHeader = inflater.inflate(R.layout.comment_header, null);
@@ -100,7 +100,7 @@ public class TagActivity extends AppCompatActivity {
         });
 
         updateComments(post_id);
-
+/*
         commentBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,6 +126,7 @@ public class TagActivity extends AppCompatActivity {
                 commentText.setText(null);
             }
         });
+*/
 
     }
 

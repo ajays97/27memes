@@ -20,14 +20,51 @@
         android:layout_height="wrap_content"
         android:text="About 27Memes"/>
 
-    <TextView
+    <at.blogc.android.views.ExpandableTextView
         android:layout_marginLeft="10dp"
         android:layout_marginRight="2dp"
-        android:text="@string/about"
+        android:maxLines="2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textAbout"
+        android:textColor="@android:color/white"
+        style="@android:style/TextAppearance.DeviceDefault.Medium"
+        android:text="@string/about"/>
+
+    <Button
+        android:id="@+id/aboutBtn"
+        android:layout_gravity="center"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="@drawable/ic_expand"/>
+
+    <TextView
+        android:textColor="@color/textPrimary"
+        style="@android:style/TextAppearance.DeviceDefault.Large"
+        android:textStyle="bold"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Disclaimer"/>
+
+    <at.blogc.android.views.ExpandableTextView
+        android:id="@+id/textDisclaimer"
+        android:maxLines="3"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="2dp"
+        android:text="@string/disclaimer"
         android:textColor="@color/textPrimary"
         style="@android:style/TextAppearance.DeviceDefault.Medium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/disclaimerBtn"
+        android:layout_gravity="center"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="@drawable/ic_expand"/>
 
     <TextView
         android:textColor="@color/textPrimary"

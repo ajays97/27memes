@@ -82,7 +82,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 AccessToken accessToken = AccessToken.getCurrentAccessToken();
                 if (accessToken != null) {
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    startActivity(new Intent(LoginActivity.this, TimelineActivity.class));
                     finish();
                 } else
                     login.setVisibility(View.VISIBLE);
@@ -96,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 // App code
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                startActivity(new Intent(LoginActivity.this, TimelineActivity.class));
                 finish();
             }
 

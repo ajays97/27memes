@@ -7,8 +7,8 @@ android {
         applicationId "com.techurity.a27memes"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 17
-        versionName "2.5"
+        versionCode 20
+        versionName "2.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -42,8 +42,12 @@ dependencies {
     compile 'com.google.firebase:firebase-messaging:10.2.6'
     compile 'me.tatarka.support:jobscheduler:0.1.1'
     compile 'com.android.support:customtabs:23.3.0'
+    compile 'at.blogc:expandabletextview:1.0.3'
+    compile 'com.android.support:support-v4:25.3.1'
     testCompile 'junit:junit:4.12'
 }
+
+
 
 
 

@@ -29,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -67,10 +68,12 @@ public class ExploreActivity extends AppCompatActivity {
                 try {
                     JSONObject dataObj = mainObj.getJSONArray("data").getJSONObject(0);
                     String[] page_list = dataObj.getString("message").split("\n");
+                    ArrayList<String> pages_list = new ArrayList<String>(Arrays.asList(page_list));
+                    Collections.shuffle(pages_list);
                     ArrayList<String> temp1 = new ArrayList<String>(), temp2 = new ArrayList<String>();
                     for(int i = 0; i< page_list.length; i++){
-                        temp1.add(page_list[i].split("-")[0]);
-                        temp2.add(page_list[i].split("-")[1]);
+                        temp1.add(pages_list.get(i).split("-")[0]);
+                        temp2.add(pages_list.get(i).split("-")[1]);
                     }
                     setPageDetails(temp1, temp2);
 
@@ -94,8 +97,6 @@ public class ExploreActivity extends AppCompatActivity {
         });
 
     }
-
-
 
     private void hidePDialog() {
         if (pDialog != null) {
@@ -146,8 +147,6 @@ public class ExploreActivity extends AppCompatActivity {
     }
 
     public void setListItems(ArrayList<String> page_list) {
-
-        Collections.shuffle(page_list);
         pageAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, page_list);
         pageList.setAdapter(pageAdapter);
 

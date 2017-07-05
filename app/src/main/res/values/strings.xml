@@ -35,4 +35,13 @@
     <string name="contact">Need help? Have an idea or bug report? Want to tell us what you enjoy about 27Memes?
     Email us at the27memes@gmail.com or follow us on Twitter: @the27memes.</string>
 
+    <string name="disclaimer">You can login using your Facebook account on 27Memes with minimal read permissions
+    to view and download the images and content showcased in this app. We will roll out
+        an update soon in which you can tag your facebook friends on memes. However in any page from the Explore section, you
+    can comment on the post that is on facebook and this is to let you know that you will be posting to facebook in that regard.
+    Hence we assure you that we will be using Publish Permissions on your Facebook account to successfully enable your commenting
+    and solely for this purpose only. We abide by the Facebook\'s Terms and Conditions in this regard.</string>
+
+    <string name="title_activity_video">VideoActivity</string>
+
 </resources>

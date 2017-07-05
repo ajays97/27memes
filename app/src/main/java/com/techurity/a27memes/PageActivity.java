@@ -138,7 +138,6 @@ public class PageActivity extends AppCompatActivity {
                         CustomTabsIntent customTabsIntent = builder.build();
                         customTabsIntent.launchUrl(PageActivity.this, Uri.parse(external_link));
                     } else {
-
                         Intent intent = new Intent(PageActivity.this, TagActivity.class);
                         intent.putExtra(Intent.EXTRA_TEXT, post_id);
                         intent.putExtra("IMAGE_URL", url);
@@ -236,6 +235,9 @@ public class PageActivity extends AppCompatActivity {
                             tags = "External Link: Click to Visit";
                             main_message = main_message + "\nClick to read full article.";
                             link = postObj.getString("link");
+                        } else if (postObj.getString("type").equals("video")) {
+                            tags = "Click to Play Video";
+                            link = postObj.getString("link");
                         } else {
                             tags = "";
                             link = "";
@@ -293,12 +295,18 @@ public class PageActivity extends AppCompatActivity {
                                 JSONObject postObj = jsonArray.getJSONObject(i);
                                 if (postObj.has("message"))
                                     main_message = postObj.getString("message");
+                                else
+                                    main_message = "Presented By 27Memes.";
                                 String image_url = null;
                                 if (postObj.has("full_picture"))
                                     image_url = postObj.getString("full_picture");
 
                                 if (postObj.getString("type").equals("link")) {
                                     tags = "External Link: Click to Visit";
+                                    main_message = main_message + "\nClick to read full article.";
+                                    link = postObj.getString("link");
+                                } else if (postObj.getString("type").equals("video")) {
+                                    tags = "Click to Play Video";
                                     link = postObj.getString("link");
                                 } else {
                                     tags = "";
