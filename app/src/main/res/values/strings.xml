@@ -43,5 +43,6 @@
     and solely for this purpose only. We abide by the Facebook\'s Terms and Conditions in this regard.</string>
 
     <string name="title_activity_video">VideoActivity</string>
+    <string name="title_activity_main_timeline">Memeline</string>
 
 </resources>
