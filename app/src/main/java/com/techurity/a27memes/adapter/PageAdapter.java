@@ -76,6 +76,9 @@ public class PageAdapter extends ArrayAdapter<PagePost>{
 
         PagePost post = posts.get(position);
 
+        if(post.getCreator().length() > 22)
+            created_at.setVisibility(View.INVISIBLE);
+
         creator.setText(post.getCreator());
         created_at.setText(post.getCreated_at());
         tags.setText(post.getTags());

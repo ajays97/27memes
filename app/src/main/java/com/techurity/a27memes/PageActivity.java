@@ -105,7 +105,6 @@ public class PageActivity extends AppCompatActivity {
         feedList.setAdapter(feedAdapter);
         feedList.addHeaderView(header);
 
-
         pDialog = new ProgressDialog(this);
         pDialog.setMessage("Loading...");
         pDialog.show();
